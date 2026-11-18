@@ -142,10 +142,10 @@ export default function SeleniteSection() {
           <div className="md:col-span-5 flex flex-col justify-center px-6 py-14 md:px-12 lg:px-16 md:py-20">
             <h2
               data-sel-reveal
-              className="font-hero-expanded text-[#0A0A0B] text-[clamp(32px,3.8vw,64px)] leading-[0.92]"
+              className="font-serif font-medium uppercase text-[#0A0A0B] text-[clamp(36px,3.8vw,58px)] leading-[0.98] tracking-[0.03em]"
             >
               <span className="block">{SITE_CONFIG.seleniteLines.headingLine1}</span>
-              <span className="block text-[#0A0A0B]/55 mt-1">
+              <span className="block font-sans font-normal text-[13px] md:text-[14px] tracking-[0.14em] text-[#0A0A0B]/70 mt-3">
                 {SITE_CONFIG.seleniteLines.headingLine2}
               </span>
             </h2>
@@ -154,14 +154,14 @@ export default function SeleniteSection() {
 
             <p
               data-sel-reveal
-              className="font-sans text-[14px] leading-[1.65] text-[#0A0A0B]/85 max-w-md"
+              className="font-sans text-[16px] md:text-[17px] leading-[1.65] text-[#0A0A0B]/85 max-w-md"
             >
               {SITE_CONFIG.seleniteLines.primaryCopy}
             </p>
 
             <p
               data-sel-reveal
-              className="mt-4 font-sans text-[13px] leading-[1.65] text-[#0A0A0B]/55 max-w-md"
+              className="mt-4 font-sans text-[16px] leading-[1.65] text-[#0A0A0B]/65 max-w-md"
             >
               {SITE_CONFIG.seleniteLines.secondaryCopy}
             </p>
@@ -171,10 +171,10 @@ export default function SeleniteSection() {
               className="mt-10 pt-8 border-t border-[#0A0A0B]/15 flex flex-col sm:flex-row sm:items-center justify-between gap-6"
             >
               <div>
-                <span className="block font-sans text-[10px] uppercase tracking-[0.14em] text-[#0A0A0B]/50">
+                <span className="block font-sans text-[11px] font-medium uppercase tracking-[0.12em] text-[#0A0A0B]/55">
                   OPTIONAL COMPANION
                 </span>
-                <span className="block font-mono text-[16px] font-medium text-[#0A0A0B] mt-1">
+                <span className="block font-mono text-[17px] font-medium text-[#0A0A0B] mt-1">
                   {SITE_CONFIG.selenitePlatePrice}
                 </span>
               </div>
@@ -182,11 +182,10 @@ export default function SeleniteSection() {
               <button
                 type="button"
                 onClick={handleToggle}
-                className={`h-[46px] px-6 border border-[#0A0A0B] font-sans text-[10px] font-medium uppercase tracking-[0.14em] transition-colors duration-200 inline-flex items-center justify-center gap-2.5 cursor-pointer ${
-                  added
-                    ? "bg-[#0A0A0B] text-white"
-                    : "bg-transparent text-[#0A0A0B] hover:bg-[#0A0A0B] hover:text-white"
-                }`}
+                className={`h-[46px] px-6 border border-[#0A0A0B] font-sans text-[11px] font-medium uppercase tracking-[0.13em] transition-colors duration-200 inline-flex items-center justify-center gap-2.5 cursor-pointer ${added
+                    ? "bg-[#0A0A0B] text-[#F3EFE7]"
+                    : "bg-transparent text-[#0A0A0B] hover:bg-[#0A0A0B] hover:text-[#F3EFE7]"
+                  }`}
               >
                 {added && <Check size={13} strokeWidth={1.75} />}
                 <span>

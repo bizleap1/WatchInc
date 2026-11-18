@@ -13,6 +13,7 @@ import {
   ChevronDown,
 } from "lucide-react";
 import { useStore } from "@/store/useStore";
+import { getPractitionerName } from "@/data/site-config";
 import type { HeroSlide } from "./heroSlides";
 
 interface ProductDetailDrawerProps {
@@ -57,7 +58,9 @@ export default function ProductDetailDrawer({
       id: "ritual",
       label: "The ritual record",
       icon: FileText,
-      body: `Energized by {PRACTITIONER_NAME} on {DATE}. Accompanying linen card records the ritual performed before dispatch. We sell the ritual that was performed; nothing more is promised.`,
+      body: getPractitionerName()
+        ? `Energized as a ritual by ${getPractitionerName()} before dispatch. Accompanying linen card records the ritual performed. We sell the ritual that was performed; nothing more is promised.`
+        : "Energized as a ritual before dispatch. Accompanying linen card records the ritual performed. We sell the ritual that was performed; nothing more is promised.",
     },
     {
       id: "selenite",
@@ -92,22 +95,26 @@ export default function ProductDetailDrawer({
     >
       <div className="h-full flex flex-col justify-between px-6 py-7 md:px-9 lg:px-11 md:py-10">
         <div>
-          {/* Title + 40MM */}
+          {/* Title (Cormorant Garamond 500) + Dial & Compact 40MM (Jost) */}
           <div data-detail-stagger className="mb-2">
-            <h2 className="font-hero-expanded text-[#111111] text-[26px] md:text-[32px] leading-[0.94]">
+            <h2 className="font-serif font-medium uppercase text-[#111111] text-[clamp(32px,2.8vw,42px)] leading-[0.98] tracking-[0.04em]">
               {slide.titleLine1}
-              <br />
-              {slide.titleLine2}
             </h2>
-            <p className="font-hero-expanded text-[#111111] text-[15px] md:text-[18px] mt-1.5">
-              {slide.size}
-            </p>
+            <div className="mt-2 flex flex-wrap items-center gap-x-2.5 gap-y-1">
+              <span className="font-sans font-normal text-[13px] uppercase tracking-[0.13em] text-[#444444]">
+                {slide.titleLine2}
+              </span>
+              <span aria-hidden="true" className="text-[#999999] text-[11px]">&middot;</span>
+              <span className="font-sans font-medium tabular-nums text-[12px] uppercase tracking-[0.11em] text-[#666666]">
+                {slide.size}
+              </span>
+            </div>
           </div>
 
           {/* DIAL NO. 0147 · CITRINE */}
           <p
             data-detail-stagger
-            className="text-[10px] font-medium uppercase tracking-[0.14em] text-[#888888] mb-6"
+            className="font-sans text-[11px] font-medium tabular-nums uppercase tracking-[0.13em] text-[#777777] mb-6"
           >
             DIAL NO. {slide.sampleDialNo} &middot; {slide.stoneLabel}
           </p>
@@ -118,7 +125,7 @@ export default function ProductDetailDrawer({
               type="button"
               onClick={() => setWishlisted((v) => !v)}
               data-cursor="LINK"
-              className={`h-[40px] border text-[11px] font-medium flex items-center justify-center gap-2 transition-colors cursor-pointer ${
+              className={`h-[42px] border text-[13px] font-medium flex items-center justify-center gap-2 transition-colors cursor-pointer ${
                 wishlisted
                   ? "border-[#111111] bg-[#111111] text-white"
                   : "border-[#111111]/20 text-[#111111] hover:border-[#111111]"
@@ -136,7 +143,7 @@ export default function ProductDetailDrawer({
               type="button"
               onClick={handleShare}
               data-cursor="LINK"
-              className="h-[40px] border border-[#111111]/20 hover:border-[#111111] text-[#111111] text-[11px] font-medium flex items-center justify-center gap-2 transition-colors cursor-pointer"
+              className="h-[42px] border border-[#111111]/20 hover:border-[#111111] text-[#111111] text-[13px] font-medium flex items-center justify-center gap-2 transition-colors cursor-pointer"
             >
               {copied ? <Check size={13} strokeWidth={1.5} /> : <Share2 size={13} strokeWidth={1.5} />}
               <span>{copied ? "Link copied" : "Share"}</span>
@@ -152,22 +159,22 @@ export default function ProductDetailDrawer({
               type="button"
               onClick={() => openWaitlist(slide.id)}
               data-cursor="LINK"
-              className="flex-1 h-[44px] border border-[#111111] text-[#111111] hover:bg-[#111111] hover:text-white transition-colors duration-200 text-[10px] font-medium uppercase tracking-[0.14em] cursor-pointer"
+              className="flex-1 h-[44px] border border-[#111111] text-[#111111] hover:bg-[#111111] hover:text-white transition-colors duration-200 text-[12px] font-medium uppercase tracking-[0.13em] cursor-pointer"
             >
               JOIN THE WAITLIST
             </button>
 
             <div className="text-right shrink-0">
-              <div className="text-[16px] font-semibold text-[#111111] leading-tight">
+              <div className="font-sans text-[17px] font-medium tabular-nums text-[#111111] leading-tight">
                 ₹ &mdash;
               </div>
-              <div className="text-[10px] text-[#888888] leading-tight mt-0.5">
+              <div className="font-sans text-[11px] text-[#777777] leading-tight mt-0.5">
                 incl. taxes
               </div>
             </div>
           </div>
 
-          {/* Icon list (12px, 16px row gap) */}
+          {/* Icon list */}
           <ul data-detail-stagger className="flex flex-col gap-[16px]">
             {detailItems.map((item) => {
               const Icon = item.icon;
@@ -180,7 +187,7 @@ export default function ProductDetailDrawer({
                     data-cursor="LINK"
                     className="w-full flex items-center justify-between text-left group cursor-pointer"
                   >
-                    <span className="flex items-center gap-3 text-[12px] font-medium text-[#111111] group-hover:opacity-70 transition-opacity">
+                    <span className="flex items-center gap-3 font-sans text-[14px] font-medium text-[#111111] group-hover:opacity-70 transition-opacity">
                       <Icon size={15} strokeWidth={1.35} className="text-[#111111]/75 shrink-0" />
                       <span>{item.label}</span>
                     </span>
@@ -193,7 +200,7 @@ export default function ProductDetailDrawer({
                     />
                   </button>
                   {isExpanded && (
-                    <p className="mt-2.5 pl-[27px] font-serif text-[15px] leading-[1.55] text-[#444444]">
+                    <p className="mt-2.5 pl-[27px] font-sans text-[16px] leading-[1.6] text-[#444444]">
                       {item.body}
                     </p>
                   )}
@@ -206,7 +213,7 @@ export default function ProductDetailDrawer({
         {/* Subtle copy-compliant footer line */}
         <p
           data-detail-stagger
-          className="mt-6 pt-4 border-t border-black/10 font-serif italic text-[14px] leading-relaxed text-[#555555]"
+          className="mt-6 pt-4 border-t border-black/10 font-sans text-[15px] leading-[1.6] text-[#555555]"
         >
           {slide.bodyCopy}
         </p>

@@ -7,7 +7,6 @@ import { Flip } from "gsap/Flip";
 import { useGSAP } from "@gsap/react";
 import {
   ChevronLeft,
-  ChevronRight,
   ArrowLeft,
   Maximize2,
   ZoomIn,
@@ -31,7 +30,7 @@ interface HeroSliderProps {
   isReady?: boolean;
 }
 
-const AUTO_SLIDE_INTERVAL_MS = 2500;
+const AUTO_SLIDE_INTERVAL_MS = 1500;
 
 export default function HeroSlider({ isReady = true }: HeroSliderProps) {
   // Ping-pong dual slots for both main slide & right front watch (zero DOM swap -> zero flicker!)
@@ -69,7 +68,6 @@ export default function HeroSlider({ isReady = true }: HeroSliderProps) {
   const isFilmOpenRef = useRef(false);
   const isInViewRef = useRef(true);
   const isHoveredRef = useRef(false);
-  const hasPlayedInitialRef = useRef(false);
   const pendingTransitionRef = useRef<{
     nextIndex: number;
     targetSlot: 0 | 1;
@@ -122,14 +120,13 @@ export default function HeroSlider({ isReady = true }: HeroSliderProps) {
   }, []);
 
   // =========================================================================
-  // 1. INITIAL LOAD TIMELINE (~1.2s total, triggered after loader finishes)
+  // 1. INITIAL LOAD TIMELINE (~1.2s total, Strict-Mode safe via useGSAP revert)
   // =========================================================================
   useGSAP(
     () => {
-      if (!isReady || hasPlayedInitialRef.current) return;
+      if (!isReady) return;
       const activeEl = getSlotEl(activeSlotRef.current);
       if (!activeEl) return;
-      hasPlayedInitialRef.current = true;
 
       const watchEl = activeEl.querySelectorAll("[data-hero-watch]");
       const titleLines = activeEl.querySelectorAll("[data-hero-title-line]");
@@ -208,33 +205,22 @@ export default function HeroSlider({ isReady = true }: HeroSliderProps) {
         0.28
       );
 
-      // Right panel grows in smoothly
-      if (panelEl) {
-        if (mobile) {
-          tl.fromTo(
-            panelEl,
-            { height: 0 },
-            { height: "12vh", duration: 0.95, ease: "expo.inOut" },
-            0.15
-          );
-        } else {
-          tl.fromTo(
-            panelEl,
-            { width: 0 },
-            { width: "14vw", duration: 0.95, ease: "expo.inOut" },
-            0.15
-          );
-        }
+      // Right panel grows in smoothly (desktop only; mobile keeps full canvas without squeezed strip)
+      if (panelEl && !mobile) {
+        tl.fromTo(
+          panelEl,
+          { width: 0 },
+          { width: "14vw", duration: 0.95, ease: "expo.inOut" },
+          0.15
+        );
       }
 
-      // Panel front watch glides in
-      if (frontBoxEl) {
+      // Panel front watch glides in (desktop collapsed preview)
+      if (frontBoxEl && !mobile) {
         tl.fromTo(
           frontBoxEl,
-          mobile ? { y: 40, opacity: 0 } : { x: 60, opacity: 0 },
-          mobile
-            ? { y: 0, opacity: 1, duration: 0.9, ease: "expo.out" }
-            : { x: 0, opacity: 1, duration: 0.9, ease: "expo.out" },
+          { x: 48, opacity: 0 },
+          { x: 0, opacity: 1, duration: 0.9, ease: "expo.out" },
           0.35
         );
       }
@@ -423,10 +409,10 @@ export default function HeroSlider({ isReady = true }: HeroSliderProps) {
         gsap.set(panelEl, { height: 0, backgroundColor: nextSlide.panelColor });
 
         tl.to(curtainEl, { y: endY, duration: sweepDuration, ease: "power3.inOut" }, 0);
-        tl.to(curtainEl, { height: "20vh", duration: sweepDuration * 0.5, ease: "power2.out" }, 0);
+        tl.to(curtainEl, { height: "18vh", duration: sweepDuration * 0.5, ease: "power2.out" }, 0);
         tl.to(
           curtainEl,
-          { height: "12vh", duration: sweepDuration * 0.5, ease: "power2.in" },
+          { height: "8vh", duration: sweepDuration * 0.5, ease: "power2.in" },
           sweepDuration * 0.5
         );
 
@@ -449,11 +435,6 @@ export default function HeroSlider({ isReady = true }: HeroSliderProps) {
           },
           0
         );
-
-        tl.to(panelEl, { height: "12vh", duration: 0.72, ease: "power3.out" }, 1.18);
-        if (incomingFrontEl) {
-          tl.to(incomingFrontEl, { y: 0, opacity: 1, duration: 0.72, ease: "power3.out" }, 1.24);
-        }
       } else {
         const stageW = stageRect.width;
 
@@ -612,7 +593,7 @@ export default function HeroSlider({ isReady = true }: HeroSliderProps) {
     navigateSlide(activeIndexRef.current - 1, -1);
   }, [navigateSlide]);
 
-  // Automatic slideshow (2.5s hold between slides, pauses on hover / detail / film / off-screen)
+  // Automatic slideshow (1.5s hold between slides, pauses on hover / detail / film / off-screen)
   const scheduleAutoSlide = useCallback(() => {
     if (autoTimerRef.current) {
       clearTimeout(autoTimerRef.current);
@@ -763,16 +744,13 @@ export default function HeroSlider({ isReady = true }: HeroSliderProps) {
         tl.to(chevronEl, { opacity: 0, duration: 0.25, ease: "power2.out" }, 0);
       }
 
-      // 2. Expand colour panel: desktop 14vw right:0 -> 65vw right:35vw; mobile bottom 12vh -> top 46%
+      // 2. Expand colour panel: desktop 14vw right:0 -> 65vw right:35vw; mobile 0 -> top 46%
       if (mobile) {
+        gsap.set(panelEl, { top: 0, bottom: "auto", width: "100%", height: 0, zIndex: 25 });
         tl.to(
           panelEl,
           {
-            top: 0,
-            bottom: "auto",
             height: "46%",
-            width: "100%",
-            zIndex: 25,
             duration,
             ease,
           },
@@ -794,15 +772,24 @@ export default function HeroSlider({ isReady = true }: HeroSliderProps) {
 
       gsap.set(frontBoxEl, { zIndex: 27 });
 
-      // 3. Uniform non-stretchy GSAP Flip glide to center of coloured area
-      tl.add(
-        Flip.from(flipState, {
-          duration,
-          ease,
-          scale: true,
-        }),
-        0
-      );
+      // 3. Uniform non-stretchy GSAP Flip glide to center of coloured area (desktop) or fade-in (mobile)
+      if (mobile) {
+        tl.fromTo(
+          frontBoxEl,
+          { opacity: 0, y: 18 },
+          { opacity: 1, y: 0, duration: duration * 0.75, ease: "power3.out" },
+          0.15
+        );
+      } else {
+        tl.add(
+          Flip.from(flipState, {
+            duration,
+            ease,
+            scale: true,
+          }),
+          0
+        );
+      }
 
       // 4. White details drawer slides in
       tl.to(
@@ -854,13 +841,22 @@ export default function HeroSlider({ isReady = true }: HeroSliderProps) {
         tl.to(
           panelEl,
           {
-            top: "auto",
-            bottom: 0,
-            height: "12vh",
-            width: "100%",
+            height: 0,
             zIndex: 14,
-            duration,
+            duration: duration * 0.85,
             ease,
+          },
+          0
+        );
+        tl.to(
+          frontBoxEl,
+          {
+            opacity: 0,
+            duration: 0.25,
+            ease: "power2.in",
+            onComplete: () => {
+              gsap.set(frontBoxEl, { zIndex: 15, opacity: 1 });
+            },
           },
           0
         );
@@ -876,20 +872,20 @@ export default function HeroSlider({ isReady = true }: HeroSliderProps) {
           },
           0
         );
-      }
 
-      // Uniform non-stretchy GSAP Flip return to right panel edge
-      tl.add(
-        Flip.from(flipState, {
-          duration,
-          ease,
-          scale: true,
-          onComplete: () => {
-            gsap.set(frontBoxEl, { zIndex: 15 });
-          },
-        }),
-        0
-      );
+        // Uniform non-stretchy GSAP Flip return to right panel preview
+        tl.add(
+          Flip.from(flipState, {
+            duration,
+            ease,
+            scale: true,
+            onComplete: () => {
+              gsap.set(frontBoxEl, { zIndex: 15 });
+            },
+          }),
+          0
+        );
+      }
 
       // Reveal moody watch & info column cleanly
       tl.to(
@@ -1105,7 +1101,7 @@ export default function HeroSlider({ isReady = true }: HeroSliderProps) {
       id="hero"
       ref={rootRef}
       aria-label="Watch Inc Collection Showcase"
-      className="relative w-full h-screen pt-[72px] bg-[#0A0A0B] text-white overflow-hidden select-none font-sans"
+      className="relative w-full h-screen pt-[64px] md:pt-[80px] bg-[#0A0A0B] text-[#F3EFE7] overflow-hidden select-none font-sans"
     >
       {/* Preload next slide's images eagerly at quality 90 for instant transitions */}
       <div
@@ -1136,15 +1132,15 @@ export default function HeroSlider({ isReady = true }: HeroSliderProps) {
         </div>
       </div>
 
-      {/* STAGE BELOW NAV: calc(100vh - 72px) */}
+      {/* STAGE BELOW NAV: calc(100vh - 64px) mobile / calc(100vh - 80px) desktop */}
       <div
         ref={stageRef}
         onWheel={handleWheel}
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
-        className="relative w-full h-[calc(100vh-72px)] overflow-hidden bg-[#0A0A0B]"
+        className="relative w-full h-[calc(100vh-64px)] md:h-[calc(100vh-80px)] overflow-hidden bg-[#0A0A0B]"
       >
-        {/* RIGHT COLOUR PANEL (14vw desktop / bottom 12vh mobile) — expands to 65vw in Open Product */}
+        {/* COLLAPSED PRODUCT PANEL (14vw desktop; hidden when closed on mobile so nothing is squeezed) */}
         <div
           ref={panelRef}
           onClick={() => {
@@ -1153,30 +1149,26 @@ export default function HeroSlider({ isReady = true }: HeroSliderProps) {
           onMouseEnter={handlePanelEnter}
           onMouseLeave={handlePanelLeave}
           style={{ backgroundColor: currentSlide.panelColor }}
-          className="absolute z-[14] right-0 bottom-0 md:top-0 w-full md:w-[14vw] h-[12vh] md:h-full cursor-pointer"
+          className="group/panel absolute z-[14] right-0 top-0 w-full md:w-[14vw] h-0 md:h-full cursor-pointer overflow-hidden"
         >
-          {/* Small "‹" Chevron on panel's left area, vertically centred (desktop) */}
+          {/* Desktop Collapsed Panel Open Control */}
           <div
             ref={panelChevronRef}
-            className="hidden md:flex items-center justify-center absolute left-4 top-1/2 -translate-y-1/2 text-black/80 pointer-events-none"
+            className="hidden md:flex flex-col items-center justify-end w-full h-full py-7 px-3 text-[#0A0A0B]"
           >
-            <ChevronLeft size={18} strokeWidth={1.4} />
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                if (!isProductOpenRef.current) handleOpenProduct();
+              }}
+              aria-label={`View details for ${currentSlide.titleLine1}`}
+              className="relative z-20 inline-flex items-center gap-1.5 px-3 py-2 border border-[#0A0A0B]/35 bg-[#0A0A0B]/[0.05] hover:bg-[#0A0A0B] hover:text-[#F3EFE7] text-[#0A0A0B] font-sans text-[10px] font-medium uppercase tracking-[0.13em] transition-colors duration-300 whitespace-nowrap cursor-pointer"
+            >
+              <ChevronLeft size={12} strokeWidth={1.5} />
+              <span>VIEW DETAILS</span>
+            </button>
           </div>
-
-          {/* Mobile bottom strip indicator */}
-          {!isProductOpen && (
-            <div className="md:hidden h-full px-6 flex items-center justify-between text-black">
-              <div className="flex flex-col">
-                <span className="text-[9px] font-medium uppercase tracking-[0.16em] opacity-70">
-                  NEXT PIECE
-                </span>
-                <span className="font-hero-expanded text-[13px] tracking-tight mt-0.5">
-                  {nextPreloadSlide.titleLine1} &middot; {nextPreloadSlide.stoneLabel}
-                </span>
-              </div>
-              <ChevronRight size={18} strokeWidth={1.5} className="mr-24" />
-            </div>
-          )}
         </div>
 
         {/* PERSISTENT PING-PONG FRONT-ON WATCH SLOT 0 (zero unmount -> zero post-slide flicker!) */}
@@ -1206,6 +1198,8 @@ export default function HeroSlider({ isReady = true }: HeroSliderProps) {
             }
           }}
           className={`absolute ${
+            isProductOpen ? "block" : "hidden md:block"
+          } ${
             activeSlot === 0 ? "cursor-pointer pointer-events-auto" : "pointer-events-none"
           } ${activeSlot === 0 && isProductOpen ? "hero-front-open" : "hero-front-resting"}`}
         >
@@ -1245,6 +1239,8 @@ export default function HeroSlider({ isReady = true }: HeroSliderProps) {
             }
           }}
           className={`absolute ${
+            isProductOpen ? "block" : "hidden md:block"
+          } ${
             activeSlot === 1 ? "cursor-pointer pointer-events-auto" : "pointer-events-none"
           } ${activeSlot === 1 && isProductOpen ? "hero-front-open" : "hero-front-resting"}`}
         >

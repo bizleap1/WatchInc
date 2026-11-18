@@ -324,18 +324,19 @@ export default function FilmOverlay({
               </div>
 
               <div className="relative z-10 max-w-md text-center md:text-left">
-                <span className="text-[9px] font-mono uppercase tracking-[0.2em] text-white/55 block mb-3">
+                <span className="text-[11px] font-sans font-medium tabular-nums uppercase tracking-[0.14em] text-[#F3EFE7]/60 block mb-3">
                   ATELIER FILM REEL &middot; {slide.sampleDialNo}
                 </span>
-                <h3 className="font-hero-expanded text-white text-[clamp(24px,3vw,42px)] mb-3">
+                <h3 className="font-serif font-medium uppercase text-[#F3EFE7] text-[clamp(32px,3.2vw,48px)] leading-[0.98] tracking-[0.04em] mb-2">
                   {slide.titleLine1}
-                  <br />
-                  {slide.titleLine2}
                 </h3>
-                <p className="text-[12px] leading-[1.6] text-white/65 mb-5">
+                <p className="font-sans font-normal text-[13px] uppercase tracking-[0.13em] text-[#F3EFE7]/80 mb-4">
+                  {slide.titleLine2}
+                </p>
+                <p className="font-sans text-[16px] leading-[1.6] text-[#F3EFE7]/75 mb-5">
                   {slide.bodyCopy}
                 </p>
-                <span className="inline-block text-[9px] font-mono uppercase tracking-[0.16em] text-white/40 border border-white/15 px-3 py-1.5">
+                <span className="inline-block text-[11px] font-sans font-medium tabular-nums uppercase tracking-[0.12em] text-[#F3EFE7]/50 border border-[#F3EFE7]/15 px-3 py-1.5">
                   FILM SOURCE: /public/films/{slide.id}.mp4
                 </span>
               </div>

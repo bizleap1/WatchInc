@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { collection, StoneId } from "@/data/collection";
-import { SITE_CONFIG } from "@/data/site-config";
+import { SITE_CONFIG, getEnergizedClause } from "@/data/site-config";
 import { useStore } from "@/store/useStore";
 import { X, Check, ArrowRight } from "lucide-react";
 
@@ -172,22 +172,21 @@ export default function PrelaunchWaitlistModal({
                 <form onSubmit={handleSubmit} className="space-y-7">
                   {/* Header */}
                   <div className="space-y-3 pr-10">
-                    <span className="font-mono text-[10px] tracking-[0.18em] text-white/55 uppercase block">
+                    <span className="font-mono text-[11px] tracking-[0.13em] text-[#F3EFE7]/58 uppercase block">
                       {SITE_CONFIG.editionLabel} · DIAL NO. 0001 — 0300
                     </span>
-                    <h2 className="font-display text-3xl sm:text-4xl text-white uppercase">
+                    <h2 className="font-serif font-medium text-[clamp(30px,3.2vw,42px)] leading-[1.0] tracking-[0.03em] text-[#F3EFE7] uppercase">
                       JOIN THE WAITLIST
                     </h2>
-                    <p className="font-sans text-[13px] text-white/50 leading-relaxed">
-                      Each dial is cut from natural stone, numbered sequentially, and energized by{" "}
-                      {SITE_CONFIG.practitionerName} before dispatch.
+                    <p className="font-sans text-[16px] text-[#F3EFE7]/70 leading-[1.6]">
+                      Each dial is cut from natural stone, numbered sequentially, and {getEnergizedClause()}.
                     </p>
                   </div>
 
                   {/* Name & Email */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div className="space-y-2">
-                      <label className="block font-sans text-[10px] uppercase tracking-[0.14em] text-white/55">
+                      <label className="block font-sans text-[11px] font-medium uppercase tracking-[0.12em] text-[#F3EFE7]/62">
                         YOUR NAME
                       </label>
                       <input
@@ -195,12 +194,12 @@ export default function PrelaunchWaitlistModal({
                         placeholder="Full name"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        className="w-full bg-transparent border-b border-white/[0.2] py-2.5 text-[13px] text-white placeholder-white/30 focus:outline-none focus:border-white transition-colors"
+                        className="w-full bg-transparent border-b border-[#F3EFE7]/[0.2] py-2.5 text-[16px] text-[#F3EFE7] placeholder-[#F3EFE7]/35 focus:outline-none focus:border-[#F3EFE7] transition-colors"
                       />
                     </div>
 
                     <div className="space-y-2">
-                      <label className="block font-sans text-[10px] uppercase tracking-[0.14em] text-white/55">
+                      <label className="block font-sans text-[11px] font-medium uppercase tracking-[0.12em] text-[#F3EFE7]/62">
                         EMAIL ADDRESS *
                       </label>
                       <input
@@ -209,7 +208,7 @@ export default function PrelaunchWaitlistModal({
                         placeholder="you@domain.com"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="w-full bg-transparent border-b border-white/[0.2] py-2.5 text-[13px] text-white placeholder-white/30 focus:outline-none focus:border-white transition-colors"
+                        className="w-full bg-transparent border-b border-[#F3EFE7]/[0.2] py-2.5 text-[16px] text-[#F3EFE7] placeholder-[#F3EFE7]/35 focus:outline-none focus:border-[#F3EFE7] transition-colors"
                       />
                     </div>
                   </div>
@@ -217,10 +216,10 @@ export default function PrelaunchWaitlistModal({
                   {/* Stone Selection */}
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
-                      <label className="font-sans text-[10px] uppercase tracking-[0.14em] text-white/55">
+                      <label className="font-sans text-[11px] font-medium uppercase tracking-[0.12em] text-[#F3EFE7]/62">
                         SELECT STONE EDITION *
                       </label>
-                      <span className="font-mono text-[10px] text-white/40">
+                      <span className="font-mono text-[11px] text-[#F3EFE7]/45">
                         {selectedStones.length} / 6 SELECTED
                       </span>
                     </div>
@@ -235,8 +234,8 @@ export default function PrelaunchWaitlistModal({
                             onClick={() => toggleStone(item.id)}
                             className={`flex items-center gap-2.5 p-3 border text-left transition-colors cursor-pointer ${
                               isSelected
-                                ? "bg-white/[0.08] border-white text-white"
-                                : "bg-transparent border-white/[0.12] hover:border-white/35 text-white/65"
+                                ? "bg-[#F3EFE7]/[0.08] border-[#F3EFE7] text-[#F3EFE7]"
+                                : "bg-transparent border-[#F3EFE7]/[0.12] hover:border-[#F3EFE7]/35 text-[#F3EFE7]/70"
                             }`}
                           >
                             <span
@@ -244,15 +243,15 @@ export default function PrelaunchWaitlistModal({
                               style={{ backgroundColor: item.colors.accent }}
                             />
                             <div className="min-w-0">
-                              <span className="block font-sans text-[11px] font-medium uppercase tracking-[0.1em] text-white truncate">
+                              <span className="block font-sans text-[12px] font-medium uppercase tracking-[0.08em] text-[#F3EFE7] truncate">
                                 {item.name}
                               </span>
-                              <span className="block font-mono text-[9px] uppercase tracking-[0.12em] text-white/45 truncate">
+                              <span className="block font-mono text-[10px] uppercase tracking-[0.1em] text-[#F3EFE7]/50 truncate">
                                 {item.stone}
                               </span>
                             </div>
                             {isSelected && (
-                              <Check className="w-3.5 h-3.5 ml-auto text-white shrink-0" />
+                              <Check className="w-3.5 h-3.5 ml-auto text-[#F3EFE7] shrink-0" />
                             )}
                           </button>
                         );
@@ -261,26 +260,26 @@ export default function PrelaunchWaitlistModal({
                   </div>
 
                   {/* Selenite Resting Plate */}
-                  <div className="p-4 border border-white/[0.12] space-y-3">
+                  <div className="p-4 border border-[#F3EFE7]/[0.12] space-y-3">
                     <div>
-                      <p className="font-sans text-[13px] text-white">
+                      <p className="font-sans text-[16px] text-[#F3EFE7]">
                         Add a selenite resting plate?
                       </p>
-                      <p className="font-mono text-[10px] text-white/45 tracking-[0.12em] uppercase mt-1">
+                      <p className="font-mono text-[11px] text-[#F3EFE7]/52 tracking-[0.11em] uppercase mt-1">
                         RAW WHITE SELENITE SLAB · {SITE_CONFIG.selenitePlatePrice}
                       </p>
                     </div>
 
-                    <div className="grid grid-cols-3 gap-2 font-mono text-[10px]">
+                    <div className="grid grid-cols-3 gap-2 font-mono text-[11px]">
                       {(["yes", "no", "maybe"] as const).map((choice) => (
                         <button
                           key={choice}
                           type="button"
                           onClick={() => setRestingPlateInterest(choice)}
-                          className={`py-2.5 px-3 border text-center uppercase tracking-[0.16em] transition-colors cursor-pointer ${
+                          className={`py-2.5 px-3 border text-center uppercase tracking-[0.13em] transition-colors cursor-pointer ${
                             restingPlateInterest === choice
-                              ? "bg-white text-[#0A0A0B] font-semibold border-white"
-                              : "bg-transparent border-white/[0.15] text-white/60 hover:border-white/40"
+                              ? "bg-[#F3EFE7] text-[#0A0A0B] font-medium border-[#F3EFE7]"
+                              : "bg-transparent border-[#F3EFE7]/[0.15] text-[#F3EFE7]/65 hover:border-[#F3EFE7]/40"
                           }`}
                         >
                           {choice}
@@ -290,12 +289,12 @@ export default function PrelaunchWaitlistModal({
                   </div>
 
                   {/* Consent */}
-                  <label className="flex items-start gap-3 cursor-pointer text-[12px] text-white/50 select-none">
+                  <label className="flex items-start gap-3 cursor-pointer text-[14px] text-[#F3EFE7]/60 select-none leading-[1.5]">
                     <input
                       type="checkbox"
                       checked={consent}
                       onChange={(e) => setConsent(e.target.checked)}
-                      className="mt-1 accent-white cursor-pointer"
+                      className="mt-1 accent-[#F3EFE7] cursor-pointer"
                     />
                     <span>
                       Receive private release notification when dials from this edition are ready.
@@ -303,17 +302,17 @@ export default function PrelaunchWaitlistModal({
                   </label>
 
                   {errorMessage && (
-                    <div className="p-3 border border-red-500/40 bg-red-500/10 text-red-300 text-xs font-mono">
+                    <div className="p-3 border border-red-500/40 bg-red-500/10 text-red-300 text-sm font-sans">
                       {errorMessage}
                     </div>
                   )}
 
                   {/* Footer Actions */}
-                  <div className="pt-4 border-t border-white/[0.12] flex items-center justify-between gap-4">
+                  <div className="pt-4 border-t border-[#F3EFE7]/[0.12] flex items-center justify-between gap-4">
                     <button
                       type="button"
                       onClick={handleClose}
-                      className="px-5 py-3 border border-white/[0.15] text-[10px] font-sans uppercase tracking-[0.16em] text-white/60 hover:text-white hover:border-white/40 transition-colors cursor-pointer"
+                      className="px-5 py-3 border border-[#F3EFE7]/[0.15] text-[12px] font-sans font-medium uppercase tracking-[0.13em] text-[#F3EFE7]/65 hover:text-[#F3EFE7] hover:border-[#F3EFE7]/40 transition-colors cursor-pointer"
                     >
                       CANCEL
                     </button>
@@ -321,7 +320,7 @@ export default function PrelaunchWaitlistModal({
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className="group inline-flex items-center gap-3 font-sans text-[10px] uppercase tracking-[0.16em] text-white disabled:opacity-50 cursor-pointer"
+                      className="group inline-flex items-center gap-3 font-sans text-[12px] font-medium uppercase tracking-[0.13em] text-[#F3EFE7] disabled:opacity-50 cursor-pointer"
                     >
                       <span>{isSubmitting ? "RECORDING..." : "SUBMIT REQUEST"}</span>
                       <span
@@ -335,39 +334,39 @@ export default function PrelaunchWaitlistModal({
                 </form>
               ) : (
                 <div className="space-y-6 py-4">
-                  <div className="border border-white/[0.15] p-6 sm:p-8 space-y-5">
-                    <div className="flex items-center justify-between border-b border-white/[0.12] pb-4 font-mono text-[10px] uppercase tracking-[0.18em] text-white/60">
+                  <div className="border border-[#F3EFE7]/[0.15] p-6 sm:p-8 space-y-5">
+                    <div className="flex items-center justify-between border-b border-[#F3EFE7]/[0.12] pb-4 font-mono text-[11px] uppercase tracking-[0.13em] text-[#F3EFE7]/60">
                       <span>{SITE_CONFIG.brandName} · WAITLIST RECORD</span>
                       <span>{confirmedRecord?.id}</span>
                     </div>
 
                     <div className="space-y-2">
-                      <h3 className="font-display text-3xl text-white uppercase">
+                      <h3 className="font-serif font-medium text-3xl text-[#F3EFE7] uppercase tracking-[0.03em]">
                         YOU ARE ON THE LIST.
                       </h3>
-                      <p className="font-sans text-[13px] text-white/55">
+                      <p className="font-sans text-[16px] text-[#F3EFE7]/65">
                         Dial number pending release assignment.
                       </p>
                     </div>
 
-                    <div className="py-4 border-y border-white/[0.12] space-y-2 font-mono text-[11px] text-white/75">
+                    <div className="py-4 border-y border-[#F3EFE7]/[0.12] space-y-2 font-mono text-[12px] text-[#F3EFE7]/78">
                       <div className="flex justify-between">
-                        <span className="text-white/40">EDITION:</span>
+                        <span className="text-[#F3EFE7]/45">EDITION:</span>
                         <span>
                           {selectedStones.map((s) => s.toUpperCase()).join(" · ")}
                         </span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-white/40">SELENITE PLATE:</span>
+                        <span className="text-[#F3EFE7]/45">SELENITE PLATE:</span>
                         <span className="uppercase">{restingPlateInterest}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-white/40">RECORD DATE:</span>
+                        <span className="text-[#F3EFE7]/45">RECORD DATE:</span>
                         <span>{confirmedRecord?.date}</span>
                       </div>
                     </div>
 
-                    <p className="font-sans text-[12px] text-white/45 leading-relaxed">
+                    <p className="font-sans text-[14px] text-[#F3EFE7]/55 leading-relaxed">
                       {SITE_CONFIG.disclaimer}
                     </p>
                   </div>
@@ -375,7 +374,7 @@ export default function PrelaunchWaitlistModal({
                   <button
                     type="button"
                     onClick={handleClose}
-                    className="w-full py-3.5 bg-white text-[#0A0A0B] font-sans text-[10px] font-semibold uppercase tracking-[0.18em] hover:bg-white/90 transition-colors cursor-pointer"
+                    className="w-full py-3.5 bg-[#F3EFE7] text-[#0A0A0B] font-sans text-[12px] font-medium uppercase tracking-[0.14em] hover:bg-[#F3EFE7]/90 transition-colors cursor-pointer"
                   >
                     RETURN TO SITE
                   </button>

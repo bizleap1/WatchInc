@@ -147,13 +147,13 @@ export default function EntranceLoader({ onComplete }: EntranceLoaderProps) {
       className="fixed inset-0 z-[100000] bg-[#0B0B0C] text-[#EDE8DF] flex flex-col items-center justify-center overflow-hidden select-none"
     >
       {/* Subtle Ambient Background Vignette */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(232,163,61,0.08)_0%,transparent_70%)] pointer-events-none" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(243,239,231,0.05)_0%,transparent_70%)] pointer-events-none" />
 
       {/* Skip Button */}
       <button
         type="button"
         onClick={handleSkip}
-        className="absolute top-8 right-8 z-20 font-mono text-[11px] tracking-[0.2em] text-[#EDE8DF]/60 hover:text-[#E8A33D] transition-colors py-2 px-4 uppercase cursor-pointer"
+        className="absolute top-8 right-8 z-20 font-mono text-[11px] tracking-[0.2em] text-[#F3EFE7]/60 hover:text-[#F3EFE7] transition-colors py-2 px-4 uppercase cursor-pointer"
         aria-label="Skip introductory calibration"
       >
         SKIP &rarr;
@@ -210,9 +210,9 @@ export default function EntranceLoader({ onComplete }: EntranceLoaderProps) {
                   stroke={
                     isActive
                       ? isMajor
-                        ? "#E8A33D"
-                        : "rgba(237, 232, 223, 0.9)"
-                      : "rgba(237, 232, 223, 0.08)"
+                        ? "#F3EFE7"
+                        : "rgba(243, 239, 231, 0.72)"
+                      : "rgba(243, 239, 231, 0.1)"
                   }
                   strokeWidth={isMajor ? 2.5 : 1}
                   strokeLinecap="round"
@@ -241,10 +241,10 @@ export default function EntranceLoader({ onComplete }: EntranceLoaderProps) {
 
         {/* Central Animated Percentage Counter */}
         <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-          <span className="font-mono text-3xl sm:text-4xl font-semibold tracking-[0.16em] text-[#EDE8DF]">
+          <span className="font-mono text-3xl sm:text-4xl font-medium tracking-[0.16em] text-[#F3EFE7]">
             {String(progress).padStart(3, "0")}
           </span>
-          <span className="font-mono text-[9px] tracking-[0.24em] text-[#E8A33D] mt-1 uppercase">
+          <span className="font-mono text-[9px] tracking-[0.24em] text-[#F3EFE7]/55 mt-1 uppercase">
             Watch Inc &bull; CALIBRATING
           </span>
         </div>

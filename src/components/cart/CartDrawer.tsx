@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { useStore } from "@/store/useStore";
-import { SITE_CONFIG } from "@/data/site-config";
+import { SITE_CONFIG, getEnergizedClause } from "@/data/site-config";
 import { X, Trash2, ArrowRight, Lock } from "lucide-react";
 
 export default function CartDrawer() {
@@ -76,15 +76,15 @@ export default function CartDrawer() {
             <div className="flex-1 py-6 overflow-y-auto space-y-5">
               {cartItems.length === 0 ? (
                 <div className="h-full min-h-[320px] flex flex-col items-start justify-center space-y-6 px-2 my-auto">
-                  <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-white/40">
+                  <span className="font-mono text-[11px] uppercase tracking-[0.13em] text-[#F3EFE7]/50">
                     00 ITEMS · {SITE_CONFIG.editionLabel}
                   </span>
 
-                  <div className="space-y-2">
-                    <p className="font-display text-2xl sm:text-3xl text-white uppercase">
+                  <div className="space-y-2.5">
+                    <p className="font-serif font-medium text-3xl sm:text-4xl text-[#F3EFE7] uppercase tracking-[0.03em] leading-[1.02]">
                       NO PIECE SELECTED.
                     </p>
-                    <p className="font-sans text-[13px] text-white/50 max-w-xs leading-relaxed">
+                    <p className="font-sans text-[16px] text-[#F3EFE7]/68 max-w-sm leading-[1.6]">
                       Explore the debut six natural stone dial timepieces or join the waitlist for priority serial assignment.
                     </p>
                   </div>
@@ -93,10 +93,10 @@ export default function CartDrawer() {
                     <Link
                       href="/"
                       onClick={closeCart}
-                      className="group inline-flex items-center gap-3 text-[10px] font-sans uppercase tracking-[0.16em] text-white"
+                      className="group inline-flex items-center gap-3 text-[12px] font-sans font-medium uppercase tracking-[0.13em] text-[#F3EFE7]"
                     >
                       <span>EXPLORE WATCHES</span>
-                      <span className="w-9 h-9 rounded-full border border-white/30 flex items-center justify-center group-hover:bg-white group-hover:text-[#0A0A0B] transition-colors">
+                      <span className="w-9 h-9 rounded-full border border-[#F3EFE7]/30 flex items-center justify-center group-hover:bg-[#F3EFE7] group-hover:text-[#0A0A0B] transition-colors">
                         <ArrowRight className="w-3.5 h-3.5" />
                       </span>
                     </Link>
@@ -107,18 +107,18 @@ export default function CartDrawer() {
                         closeCart();
                         openWaitlist();
                       }}
-                      className="px-4 py-2.5 border border-white/25 hover:border-white text-[10px] font-sans uppercase tracking-[0.16em] text-white/80 hover:text-white transition-colors cursor-pointer"
+                      className="px-4 py-2.5 border border-[#F3EFE7]/25 hover:border-[#F3EFE7] text-[12px] font-sans font-medium uppercase tracking-[0.13em] text-[#F3EFE7]/85 hover:text-[#F3EFE7] transition-colors cursor-pointer"
                     >
                       JOIN WAITLIST
                     </button>
                   </div>
                 </div>
               ) : (
-                <div className="divide-y divide-white/[0.12] border-y border-white/[0.12]">
+                <div className="divide-y divide-[#F3EFE7]/[0.12] border-y border-[#F3EFE7]/[0.12]">
                   {cartItems.map((item) => (
                     <div key={item.id} className="py-5 space-y-4">
                       <div className="flex items-start gap-4">
-                        <div className="relative w-20 h-24 bg-[#111113] border border-white/[0.12] flex-shrink-0 overflow-hidden">
+                        <div className="relative w-20 h-24 bg-[#111113] border border-[#F3EFE7]/[0.12] flex-shrink-0 overflow-hidden">
                           <Image
                             src={`/watches/${item.pieceId}/front.png`}
                             alt={`${item.name} ${item.stone}`}
@@ -130,13 +130,13 @@ export default function CartDrawer() {
 
                         <div className="flex-1 space-y-1 text-left">
                           <div className="flex items-start justify-between gap-2">
-                            <h3 className="font-display text-lg text-white uppercase leading-tight">
+                            <h3 className="font-serif font-medium text-2xl text-[#F3EFE7] uppercase tracking-[0.03em] leading-tight">
                               {item.name}
                             </h3>
                             <button
                               type="button"
                               onClick={() => removeFromCart(item.id)}
-                              className="text-white/40 hover:text-white p-1 transition-colors cursor-pointer"
+                              className="text-[#F3EFE7]/45 hover:text-[#F3EFE7] p-1 transition-colors cursor-pointer"
                               title="Remove Allocation"
                               aria-label="Remove Allocation"
                             >
@@ -144,31 +144,31 @@ export default function CartDrawer() {
                             </button>
                           </div>
 
-                          <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-white/55">
+                          <p className="font-mono text-[11px] uppercase tracking-[0.12em] text-[#F3EFE7]/60">
                             {item.stone} · DIAL {item.dialNo} · {item.size}
                           </p>
 
-                          <p className="font-sans text-[11px] text-white/45">
+                          <p className="font-sans text-[14px] text-[#F3EFE7]/55">
                             Strap: {item.strap}
                           </p>
 
-                          <div className="pt-1 font-mono text-sm text-white">
+                          <div className="pt-1 font-mono text-[15px] text-[#F3EFE7]">
                             {SITE_CONFIG.watchPrice}
                           </div>
                         </div>
                       </div>
 
                       {item.addSelenite && (
-                        <div className="pt-3 border-t border-white/[0.1] flex items-center justify-between text-[11px] font-sans text-white/60">
+                        <div className="pt-3 border-t border-[#F3EFE7]/[0.1] flex items-center justify-between text-[14px] font-sans text-[#F3EFE7]/65">
                           <span>Selenite Resting Plate</span>
                           <div className="flex items-center gap-3">
-                            <span className="font-mono text-white">
+                            <span className="font-mono text-[11px] uppercase tracking-[0.12em] text-[#F3EFE7]">
                               INCLUDED
                             </span>
                             <button
                               type="button"
                               onClick={() => toggleCartSelenite(item.id)}
-                              className="text-[10px] uppercase tracking-[0.14em] text-white/45 hover:text-white underline cursor-pointer"
+                              className="text-[11px] uppercase tracking-[0.12em] text-[#F3EFE7]/50 hover:text-[#F3EFE7] underline cursor-pointer"
                               aria-label="Remove Selenite resting plate add-on"
                             >
                               Remove
@@ -184,18 +184,18 @@ export default function CartDrawer() {
 
             {/* Footer */}
             {cartItems.length > 0 && (
-              <div className="pt-5 border-t border-white/[0.12] space-y-4">
+              <div className="pt-5 border-t border-[#F3EFE7]/[0.12] space-y-4">
                 <div className="flex items-baseline justify-between">
-                  <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-white/50">
+                  <span className="font-mono text-[11px] uppercase tracking-[0.13em] text-[#F3EFE7]/55">
                     ALLOCATION TOTAL
                   </span>
-                  <span className="font-mono text-lg text-white">
+                  <span className="font-mono text-lg text-[#F3EFE7]">
                     {subtotal > 0 ? `$${subtotal.toLocaleString()}` : SITE_CONFIG.watchPrice}
                   </span>
                 </div>
 
-                <p className="text-[11px] font-sans text-white/45">
-                  Energized by {SITE_CONFIG.practitionerName} before dispatch. Numbered sequentially from 0001 — 0300.
+                <p className="text-[14px] font-sans text-[#F3EFE7]/55 leading-[1.55]">
+                  Numbered sequentially from 0001 — 0300 and {getEnergizedClause()}.
                 </p>
 
                 <button
@@ -204,7 +204,7 @@ export default function CartDrawer() {
                     closeCart();
                     openWaitlist(cartItems[0]?.pieceId);
                   }}
-                  className="w-full py-4 px-6 bg-white text-[#0A0A0B] hover:bg-white/90 font-sans text-[10px] tracking-[0.18em] font-medium uppercase flex items-center justify-center gap-2 cursor-pointer transition-colors"
+                  className="w-full py-4 px-6 bg-[#F3EFE7] text-[#0A0A0B] hover:bg-[#F3EFE7]/90 font-sans text-[12px] tracking-[0.14em] font-medium uppercase flex items-center justify-center gap-2 cursor-pointer transition-colors"
                 >
                   <Lock className="w-3.5 h-3.5" />
                   <span>CONFIRM ALLOCATION REQUEST</span>

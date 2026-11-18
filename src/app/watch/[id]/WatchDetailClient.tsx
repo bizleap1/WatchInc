@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { collection, WatchPiece } from "@/data/collection";
-import { SITE_CONFIG } from "@/data/site-config";
+import { SITE_CONFIG, getPractitionerName, getEnergizedClause } from "@/data/site-config";
 import { useStore } from "@/store/useStore";
 import ProductLightbox from "@/components/product/ProductLightbox";
 import InTheBoxExploded from "@/components/product/InTheBoxExploded";
@@ -75,7 +75,7 @@ export default function WatchDetailClient({ product }: WatchDetailClientProps) {
     <>
       <Navbar />
 
-      <main className="w-full min-h-screen bg-[#0A0A0B] text-white pt-28 pb-16">
+      <main className="w-full min-h-screen bg-[#0A0A0B] text-[#F3EFE7] pt-28 pb-16">
         {/* Top Breadcrumb */}
         <div className="px-6 sm:px-[4vw] mb-10">
           <div className="max-w-7xl mx-auto flex items-center gap-3 font-sans text-[10px] uppercase tracking-[0.14em] text-white/50">
@@ -137,11 +137,10 @@ export default function WatchDetailClient({ product }: WatchDetailClientProps) {
                     key={view.label}
                     type="button"
                     onClick={() => setActiveGalleryIndex(idx)}
-                    className={`flex items-center gap-3 p-3 border text-left transition-colors cursor-pointer ${
-                      activeGalleryIndex === idx
+                    className={`flex items-center gap-3 p-3 border text-left transition-colors cursor-pointer ${activeGalleryIndex === idx
                         ? "border-white bg-white/[0.04]"
                         : "border-white/[0.12] hover:border-white/30"
-                    }`}
+                      }`}
                     style={
                       activeGalleryIndex === idx
                         ? { borderColor: product.colors.accent }
@@ -178,46 +177,45 @@ export default function WatchDetailClient({ product }: WatchDetailClientProps) {
                     className="w-2.5 h-2.5 inline-block"
                     style={{ backgroundColor: product.colors.accent }}
                   />
-                  <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-white/60">
+                  <span className="font-mono text-[11px] uppercase tracking-[0.13em] text-[#F3EFE7]/65">
                     {product.stone.toUpperCase()} DIAL · 40MM
                   </span>
                 </div>
 
-                <h1 className="font-display text-5xl sm:text-6xl text-white uppercase">
+                <h1 className="font-serif font-medium uppercase text-[clamp(42px,4.5vw,64px)] text-[#F3EFE7] tracking-[0.04em] leading-[0.98]">
                   {product.name}
                 </h1>
 
-                <p className="font-sans text-[14px] text-white/85">
+                <p className="font-sans text-[16px] md:text-[17px] text-[#F3EFE7]/82 leading-[1.6]">
                   {product.intention}
                 </p>
 
                 <div className="pt-2 flex items-baseline gap-4">
-                  <span className="font-mono text-xl text-white">
+                  <span className="font-mono text-xl text-[#F3EFE7]">
                     {SITE_CONFIG.watchPrice}
                   </span>
-                  <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-white/45">
+                  <span className="font-mono text-[11px] uppercase tracking-[0.12em] text-[#F3EFE7]/50">
                     {SITE_CONFIG.editionLabel}
                   </span>
                 </div>
               </div>
 
               {/* Numbering Note */}
-              <div className="p-4 border border-white/[0.12] space-y-1.5">
-                <div className="flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.16em]">
-                  <span className="text-white/50">DIAL NUMBERING</span>
+              <div className="p-4 border border-[#F3EFE7]/[0.12] space-y-1.5">
+                <div className="flex items-center justify-between font-mono text-[11px] uppercase tracking-[0.13em]">
+                  <span className="text-[#F3EFE7]/55">DIAL NUMBERING</span>
                   <span style={{ color: product.colors.accent }}>
                     0001 — 0300
                   </span>
                 </div>
-                <p className="font-sans text-[12px] text-white/50 leading-relaxed">
-                  Each natural {product.stone.toLowerCase()} dial is individually cut, numbered, and energized by{" "}
-                  {SITE_CONFIG.practitionerName} before dispatch.
+                <p className="font-sans text-[15px] text-[#F3EFE7]/65 leading-[1.6]">
+                  Each natural {product.stone.toLowerCase()} dial is individually cut, numbered, and {getEnergizedClause()}.
                 </p>
               </div>
 
               {/* Strap Selector */}
               <div className="space-y-2.5">
-                <span className="block font-sans text-[10px] uppercase tracking-[0.14em] text-white/50">
+                <span className="block font-sans text-[11px] font-medium uppercase tracking-[0.12em] text-[#F3EFE7]/55">
                   STRAP
                 </span>
                 <div className="grid grid-cols-2 gap-2">
@@ -228,11 +226,10 @@ export default function WatchDetailClient({ product }: WatchDetailClientProps) {
                         key={strap}
                         type="button"
                         onClick={() => setSelectedStrap(strap)}
-                        className={`py-3 px-4 border font-mono text-[10px] uppercase tracking-[0.14em] transition-colors cursor-pointer ${
-                          isSelected
-                            ? "bg-white text-[#0A0A0B] border-white font-semibold"
-                            : "border-white/[0.15] text-white/65 hover:border-white/40"
-                        }`}
+                        className={`py-3 px-4 border font-mono text-[11px] uppercase tracking-[0.12em] transition-colors cursor-pointer ${isSelected
+                            ? "bg-[#F3EFE7] text-[#0A0A0B] border-[#F3EFE7] font-medium"
+                            : "border-[#F3EFE7]/[0.15] text-[#F3EFE7]/70 hover:border-[#F3EFE7]/40"
+                          }`}
                       >
                         {strap}
                       </button>
@@ -245,19 +242,17 @@ export default function WatchDetailClient({ product }: WatchDetailClientProps) {
               <button
                 type="button"
                 onClick={() => setAddSelenite(!addSelenite)}
-                className={`w-full p-4 border text-left transition-colors cursor-pointer flex items-center justify-between gap-4 ${
-                  addSelenite
+                className={`w-full p-4 border text-left transition-colors cursor-pointer flex items-center justify-between gap-4 ${addSelenite
                     ? "border-white bg-white/[0.06]"
                     : "border-white/[0.12] hover:border-white/30"
-                }`}
+                  }`}
               >
                 <div className="flex items-center gap-3">
                   <span
-                    className={`w-5 h-5 border flex items-center justify-center shrink-0 ${
-                      addSelenite
+                    className={`w-5 h-5 border flex items-center justify-center shrink-0 ${addSelenite
                         ? "bg-white border-white text-[#0A0A0B]"
                         : "border-white/30"
-                    }`}
+                      }`}
                   >
                     {addSelenite && <Check className="w-3.5 h-3.5 stroke-[2.5]" />}
                   </span>
@@ -281,7 +276,7 @@ export default function WatchDetailClient({ product }: WatchDetailClientProps) {
                   <button
                     type="button"
                     onClick={() => openWaitlist(product.id)}
-                    className="w-full py-4 px-6 text-[#0A0A0B] font-sans text-[11px] font-semibold uppercase tracking-[0.18em] flex items-center justify-between cursor-pointer hover:opacity-90 transition-opacity"
+                    className="w-full py-4 px-6 text-[#0A0A0B] font-sans text-[12px] font-medium uppercase tracking-[0.14em] flex items-center justify-between cursor-pointer hover:opacity-90 transition-opacity"
                     style={{ backgroundColor: product.colors.accent }}
                   >
                     <span>JOIN WAITLIST · {product.name}</span>
@@ -291,7 +286,7 @@ export default function WatchDetailClient({ product }: WatchDetailClientProps) {
                   <button
                     type="button"
                     onClick={handleAddToCart}
-                    className="w-full py-4 px-6 text-[#0A0A0B] font-sans text-[11px] font-semibold uppercase tracking-[0.18em] flex items-center justify-between cursor-pointer hover:opacity-90 transition-opacity"
+                    className="w-full py-4 px-6 text-[#0A0A0B] font-sans text-[12px] font-medium uppercase tracking-[0.14em] flex items-center justify-between cursor-pointer hover:opacity-90 transition-opacity"
                     style={{ backgroundColor: product.colors.accent }}
                   >
                     <span>RESERVE ALLOCATION · {product.name}</span>
@@ -299,7 +294,7 @@ export default function WatchDetailClient({ product }: WatchDetailClientProps) {
                   </button>
                 )}
 
-                <p className="font-sans text-[11px] text-white/45 leading-relaxed">
+                <p className="font-sans text-[13px] text-[#F3EFE7]/55 leading-relaxed">
                   {SITE_CONFIG.disclaimer}
                 </p>
               </div>
@@ -315,7 +310,9 @@ export default function WatchDetailClient({ product }: WatchDetailClientProps) {
                   {
                     id: "ritual",
                     title: "THE RITUAL",
-                    content: `Before dispatch, each watch is energized by ${SITE_CONFIG.practitionerName} and accompanied by a numbered cotton card bearing the dial number and ${SITE_CONFIG.ritualDate}.`,
+                    content: getPractitionerName()
+                      ? `Before dispatch, each watch is energized by ${getPractitionerName()} and accompanied by a numbered cotton card bearing the dial number and ritual date.`
+                      : "Before dispatch, each watch is energized as a ritual and accompanied by a numbered cotton card bearing the dial number and ritual date.",
                   },
                   {
                     id: "box",
@@ -334,9 +331,8 @@ export default function WatchDetailClient({ product }: WatchDetailClientProps) {
                       >
                         <span>{item.title}</span>
                         <ChevronDown
-                          className={`w-4 h-4 text-white/50 transition-transform duration-300 ${
-                            isOpen ? "rotate-180 text-white" : ""
-                          }`}
+                          className={`w-4 h-4 text-white/50 transition-transform duration-300 ${isOpen ? "rotate-180 text-white" : ""
+                            }`}
                         />
                       </button>
                       <AnimatePresence>
@@ -348,7 +344,7 @@ export default function WatchDetailClient({ product }: WatchDetailClientProps) {
                             transition={{ duration: 0.28 }}
                             className="overflow-hidden"
                           >
-                            <p className="font-sans text-[12px] text-white/50 leading-relaxed pt-3">
+                            <p className="font-sans text-[16px] text-[#F3EFE7]/68 leading-[1.6] pt-3">
                               {item.content}
                             </p>
                           </motion.div>
@@ -380,7 +376,7 @@ export default function WatchDetailClient({ product }: WatchDetailClientProps) {
               </span>
             </div>
 
-            <div className="divide-y divide-white/[0.12] border-y border-white/[0.12] font-sans text-[12px]">
+            <div className="divide-y divide-[#F3EFE7]/[0.12] border-y border-[#F3EFE7]/[0.12] font-sans text-[15px]">
               {[
                 ["CASE", "40mm Brushed 316L Stainless Steel · Thin Polished Bevel"],
                 ["CRYSTAL", "Domed Sapphire Crystal with Anti-Reflective Coating"],
@@ -388,16 +384,16 @@ export default function WatchDetailClient({ product }: WatchDetailClientProps) {
                 ["HANDS", "Slim Polished Steel Baton Hour, Minute, and Seconds"],
                 ["STRAP", "Black Textured Leather with Fine Tonal Stitching"],
                 ["EDITION", `${SITE_CONFIG.editionLabel} · Dial No. 0001 — 0300`],
-                ["RITUAL RECORD", `Signed by ${SITE_CONFIG.practitionerName} · Dated ${SITE_CONFIG.ritualDate}`],
+                ["RITUAL RECORD", getPractitionerName() ? `Signed by ${getPractitionerName()} · Numbered Cotton Card` : "Accompanying Numbered & Dated Cotton Card"],
               ].map(([label, val]) => (
                 <div
                   key={label}
                   className="py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-1"
                 >
-                  <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-white/45">
+                  <span className="font-mono text-[11px] uppercase tracking-[0.13em] text-[#F3EFE7]/50">
                     {label}
                   </span>
-                  <span className="text-white/85 sm:text-right">{val}</span>
+                  <span className="text-[#F3EFE7]/88 sm:text-right">{val}</span>
                 </div>
               ))}
             </div>
@@ -408,7 +404,7 @@ export default function WatchDetailClient({ product }: WatchDetailClientProps) {
         <section className="px-6 sm:px-[4vw] py-20 border-t border-white/[0.12]">
           <div className="max-w-7xl mx-auto space-y-10">
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-              <h2 className="font-display text-3xl sm:text-5xl text-white uppercase">
+              <h2 className="font-serif font-medium text-3xl sm:text-5xl text-[#F3EFE7] uppercase tracking-[0.04em]">
                 THE OTHER FIVE
               </h2>
               <Link
@@ -443,7 +439,7 @@ export default function WatchDetailClient({ product }: WatchDetailClientProps) {
                     >
                       {other.stone}
                     </span>
-                    <h3 className="font-display text-xl text-white uppercase">
+                    <h3 className="font-serif font-medium text-2xl text-[#F3EFE7] uppercase tracking-[0.04em]">
                       {other.name}
                     </h3>
                     <p className="font-sans text-[11px] text-white/50 line-clamp-1">

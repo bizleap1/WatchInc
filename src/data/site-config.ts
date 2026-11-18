@@ -16,7 +16,7 @@ export interface StoneWatchConfig {
 
 export const SITE_CONFIG = {
   brandName: "WATCH INC",
-  practitionerName: "{PRACTITIONER_NAME}",
+  practitionerName: "",
   ritualDate: "{DATE}",
   sampleDialNo: "{DIAL_NO}",
   watchPrice: "{PRICE}",
@@ -54,7 +54,7 @@ export const SITE_CONFIG = {
       name: "OVERFLOW",
       stone: "CITRINE",
       pieceType: "THE WEALTH PIECE",
-      panelColor: "#E3A93A",
+      panelColor: "#B58E4A",
       traditionLine: "Worn for abundance, in the tradition of citrine.",
       moodySrc: "/watches/overflow/moody.webp",
       frontSrc: "/watches/overflow/front.png",
@@ -67,7 +67,7 @@ export const SITE_CONFIG = {
       name: "CHERISH",
       stone: "ROSE QUARTZ",
       pieceType: "THE SELF-LOVE PIECE",
-      panelColor: "#E7A9B0",
+      panelColor: "#B88B90",
       traditionLine: "Worn for the love you give yourself, in the tradition of rose quartz.",
       moodySrc: "/watches/cherish/moody.webp",
       frontSrc: "/watches/cherish/front.png",
@@ -80,7 +80,7 @@ export const SITE_CONFIG = {
       name: "HUSH",
       stone: "AMETHYST",
       pieceType: "THE PEACE PIECE",
-      panelColor: "#9B7FD1",
+      panelColor: "#8C7BA8",
       traditionLine: "Worn for a quieter mind, in the tradition of amethyst.",
       moodySrc: "/watches/hush/moody.webp",
       frontSrc: "/watches/hush/front.png",
@@ -93,7 +93,7 @@ export const SITE_CONFIG = {
       name: "ASCENT",
       stone: "TIGER'S EYE",
       pieceType: "THE CAREER PIECE",
-      panelColor: "#B9813B",
+      panelColor: "#A3794B",
       traditionLine: "Worn for the next step up, in the tradition of tiger's eye.",
       moodySrc: "/watches/ascent/moody.webp",
       frontSrc: "/watches/ascent/front.png",
@@ -106,7 +106,7 @@ export const SITE_CONFIG = {
       name: "WILDFIRE",
       stone: "SUNSTONE",
       pieceType: "THE FAME PIECE",
-      panelColor: "#E8743B",
+      panelColor: "#BF7352",
       traditionLine: "Worn to be seen, in the tradition of sunstone.",
       moodySrc: "/watches/wildfire/moody.webp",
       frontSrc: "/watches/wildfire/front.png",
@@ -119,7 +119,7 @@ export const SITE_CONFIG = {
       name: "CADENCE",
       stone: "SODALITE",
       pieceType: "THE VOICE PIECE",
-      panelColor: "#3F6FD1",
+      panelColor: "#5F7AA8",
       traditionLine: "Worn for words that land, in the tradition of sodalite.",
       moodySrc: "/watches/cadence/moody.webp",
       frontSrc: "/watches/cadence/front.png",
@@ -127,3 +127,18 @@ export const SITE_CONFIG = {
     },
   ] as StoneWatchConfig[],
 };
+
+export function getPractitionerName(): string | null {
+  const value = SITE_CONFIG.practitionerName?.trim();
+  if (!value || (value.startsWith("{") && value.endsWith("}"))) {
+    return null;
+  }
+  return value;
+}
+
+export function getEnergizedClause(): string {
+  const practitioner = getPractitionerName();
+  return practitioner
+    ? `energized as a ritual by ${practitioner} before dispatch`
+    : "energized as a ritual before dispatch";
+}

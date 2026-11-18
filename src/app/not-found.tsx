@@ -15,25 +15,25 @@ export default function NotFound() {
           </span>
         </div>
 
-        <h1 className="font-display text-4xl sm:text-6xl text-white uppercase">
+        <h1 className="font-serif font-medium text-4xl sm:text-6xl text-[#F3EFE7] uppercase tracking-[0.03em]">
           DIAL NOT FOUND.
         </h1>
 
-        <p className="font-sans text-[13px] text-white/50 leading-relaxed">
+        <p className="font-sans text-[16px] text-[#F3EFE7]/65 leading-[1.6]">
           The page or edition record you requested does not exist. Explore the six natural stone watches below.
         </p>
 
-        <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 font-sans text-[10px] uppercase tracking-[0.16em]">
+        <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 font-sans text-[12px] uppercase tracking-[0.13em]">
           <Link
             href="/"
-            className="inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-white text-[#0A0A0B] hover:bg-white/90 transition-colors font-semibold"
+            className="inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-[#F3EFE7] text-[#0A0A0B] hover:bg-[#F3EFE7]/90 transition-colors font-medium"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             <span>RETURN HOME</span>
           </Link>
           <Link
             href="/#selenite"
-            className="inline-flex items-center justify-center gap-2 px-6 py-3.5 border border-white/[0.2] text-white hover:border-white transition-colors"
+            className="inline-flex items-center justify-center gap-2 px-6 py-3.5 border border-[#F3EFE7]/[0.2] text-[#F3EFE7] hover:border-[#F3EFE7] transition-colors font-medium"
           >
             <span>SELENITE</span>
           </Link>

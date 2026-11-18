@@ -1,4 +1,7 @@
 import type { StoneId, StoneType } from "@/data/collection";
+import { getEnergizedClause } from "@/data/site-config";
+
+const ritualClause = getEnergizedClause();
 
 export interface HeroSlide {
   id: StoneId;
@@ -32,11 +35,11 @@ export const HERO_SLIDES: HeroSlide[] = [
     titleLine1: "OVERFLOW",
     titleLine2: "CITRINE DIAL",
     size: "40MM",
-    panelColor: "#E3A93A",
+    panelColor: "#B58E4A",
     stoneLabel: "CITRINE",
     filmHeadline: "Worn for abundance",
     bodyCopy:
-      "Worn for abundance, in the tradition of citrine. Energized by {PRACTITIONER_NAME} before it ships.",
+      `Cut from natural citrine, numbered sequentially, and ${ritualClause}.`,
     dialRangeLabel: "DIAL NO. 0001 — 0300 · LIMITED EDITION",
     sampleDialNo: "0147",
     discoverLabel: "DISCOVER OVERFLOW",
@@ -57,11 +60,11 @@ export const HERO_SLIDES: HeroSlide[] = [
     titleLine1: "CHERISH",
     titleLine2: "ROSE QUARTZ DIAL",
     size: "40MM",
-    panelColor: "#E7A9B0",
+    panelColor: "#B88B90",
     stoneLabel: "ROSE QUARTZ",
     filmHeadline: "Worn for the love you give yourself",
     bodyCopy:
-      "Worn for the love you give yourself, in the tradition of rose quartz. Energized by {PRACTITIONER_NAME} before it ships.",
+      `Cut from natural rose quartz, numbered sequentially, and ${ritualClause}.`,
     dialRangeLabel: "DIAL NO. 0001 — 0300 · LIMITED EDITION",
     sampleDialNo: "0082",
     discoverLabel: "DISCOVER CHERISH",
@@ -82,11 +85,11 @@ export const HERO_SLIDES: HeroSlide[] = [
     titleLine1: "HUSH",
     titleLine2: "AMETHYST DIAL",
     size: "40MM",
-    panelColor: "#9B7FD1",
+    panelColor: "#8C7BA8",
     stoneLabel: "AMETHYST",
     filmHeadline: "Worn for a quieter mind",
     bodyCopy:
-      "Worn for a quieter mind, in the tradition of amethyst. Energized by {PRACTITIONER_NAME} before it ships.",
+      `Cut from natural amethyst, numbered sequentially, and ${ritualClause}.`,
     dialRangeLabel: "DIAL NO. 0001 — 0300 · LIMITED EDITION",
     sampleDialNo: "0219",
     discoverLabel: "DISCOVER HUSH",
@@ -107,11 +110,11 @@ export const HERO_SLIDES: HeroSlide[] = [
     titleLine1: "ASCENT",
     titleLine2: "TIGER'S EYE DIAL",
     size: "40MM",
-    panelColor: "#B9813B",
+    panelColor: "#A3794B",
     stoneLabel: "TIGER'S EYE",
     filmHeadline: "Worn for the next step up",
     bodyCopy:
-      "Worn for the next step up, in the tradition of tiger's eye. Energized by {PRACTITIONER_NAME} before it ships.",
+      `Cut from natural tiger's eye, numbered sequentially, and ${ritualClause}.`,
     dialRangeLabel: "DIAL NO. 0001 — 0300 · LIMITED EDITION",
     sampleDialNo: "0014",
     discoverLabel: "DISCOVER ASCENT",
@@ -132,11 +135,11 @@ export const HERO_SLIDES: HeroSlide[] = [
     titleLine1: "WILDFIRE",
     titleLine2: "SUNSTONE DIAL",
     size: "40MM",
-    panelColor: "#E8743B",
+    panelColor: "#BF7352",
     stoneLabel: "SUNSTONE",
     filmHeadline: "Worn to be seen",
     bodyCopy:
-      "Worn to be seen, in the tradition of sunstone. Energized by {PRACTITIONER_NAME} before it ships.",
+      `Cut from natural sunstone, numbered sequentially, and ${ritualClause}.`,
     dialRangeLabel: "DIAL NO. 0001 — 0300 · LIMITED EDITION",
     sampleDialNo: "0173",
     discoverLabel: "DISCOVER WILDFIRE",
@@ -157,11 +160,11 @@ export const HERO_SLIDES: HeroSlide[] = [
     titleLine1: "CADENCE",
     titleLine2: "SODALITE DIAL",
     size: "40MM",
-    panelColor: "#3F6FD1",
+    panelColor: "#5F7AA8",
     stoneLabel: "SODALITE",
     filmHeadline: "Worn for words that land",
     bodyCopy:
-      "Worn for words that land, in the tradition of sodalite. Energized by {PRACTITIONER_NAME} before it ships.",
+      `Cut from natural sodalite, numbered sequentially, and ${ritualClause}.`,
     dialRangeLabel: "DIAL NO. 0001 — 0300 · LIMITED EDITION",
     sampleDialNo: "0264",
     discoverLabel: "DISCOVER CADENCE",

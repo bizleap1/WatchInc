@@ -88,7 +88,7 @@ export default function WornSection() {
       id="worn"
       ref={sectionRef}
       aria-label="Worn Lifestyle Editorial"
-      className="relative w-full bg-[#0A0A0B] text-white border-t border-white/[0.12] pt-16 md:pt-24 pb-24 md:pb-32"
+      className="relative w-full bg-[#0A0A0B] text-[#F3EFE7] border-t border-[#F3EFE7]/[0.12] pt-16 md:pt-24 pb-24 md:pb-32"
     >
       <div className="relative px-6 md:px-[4vw]">
         {/* Asymmetric Grid: One tall left, two stacked right */}
@@ -155,12 +155,12 @@ export default function WornSection() {
           </div>
         </div>
 
-        {/* Big Archivo Expanded Caption Overlaid Across the Grid Edge */}
+        {/* Editorial Caption Overlaid Across the Grid Edge */}
         <div
           data-worn-caption
           className="relative md:absolute md:left-[4vw] md:bottom-10 z-20 mt-8 md:mt-0 pointer-events-none select-none"
         >
-          <h2 className="font-hero-expanded text-white text-[clamp(36px,5.8vw,96px)] leading-[0.9] drop-shadow-[0_12px_36px_rgba(0,0,0,0.85)]">
+          <h2 className="font-serif font-medium uppercase text-[#F3EFE7] text-[clamp(36px,5.2vw,82px)] leading-[0.98] tracking-[0.03em] drop-shadow-[0_12px_36px_rgba(0,0,0,0.85)]">
             WORN FOR
             <br />
             A REASON.

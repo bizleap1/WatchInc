@@ -35,13 +35,13 @@ export default function Template({ children }: { children: React.ReactNode }) {
             className="fixed inset-0 z-[99999] pointer-events-none flex flex-col items-center justify-center overflow-hidden"
           >
             <div
-              className="absolute bottom-0 left-0 right-0 h-[2px]"
-              style={{ backgroundColor: "var(--theme-accent, #E8A33D)" }}
+              className="absolute bottom-0 left-0 right-0 h-[1px]"
+              style={{ backgroundColor: "rgba(243, 239, 231, 0.25)" }}
             />
-            <div className="font-sans font-medium text-[15px] tracking-[0.3em] text-white uppercase">
+            <div className="font-sans font-medium text-[15px] tracking-[0.3em] text-[#F3EFE7] uppercase">
               WATCH INC
             </div>
-            <div className="font-mono text-[9px] tracking-[0.28em] text-white/40 uppercase mt-2">
+            <div className="font-mono text-[9px] tracking-[0.28em] text-[#F3EFE7]/45 uppercase mt-2">
               NATURAL STONE DIALS
             </div>
           </motion.div>

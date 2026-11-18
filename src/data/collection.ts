@@ -294,10 +294,10 @@ export const seleniteWorld: StoneColorWorld = {
 
 export const baseColorWorld = {
   bg: "#0A0A0B",
-  text: "#FFFFFF",
-  accent: "#E3A93A",
-  border: "rgba(255, 255, 255, 0.12)",
-  muted: "rgba(255, 255, 255, 0.5)",
+  text: "#F3EFE7",
+  accent: "#F3EFE7",
+  border: "rgba(243, 239, 231, 0.12)",
+  muted: "rgba(243, 239, 231, 0.62)",
 };
 
 export function getPieceById(id: string): WatchPiece | undefined {

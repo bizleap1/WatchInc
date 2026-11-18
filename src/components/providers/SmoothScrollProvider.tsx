@@ -103,11 +103,17 @@ export default function SmoothScrollProvider({
     } else {
       if (typeof target === "string") {
         const el = document.querySelector(target);
-        el?.scrollIntoView({ behavior: "smooth" });
+        if (el) {
+          const offset = typeof options.offset === "number" ? options.offset : 0;
+          const top = el.getBoundingClientRect().top + window.scrollY + offset;
+          window.scrollTo({ top, behavior: "smooth" });
+        }
       } else if (typeof target === "number") {
         window.scrollTo({ top: target, behavior: "smooth" });
       } else if (target instanceof HTMLElement) {
-        target.scrollIntoView({ behavior: "smooth" });
+        const offset = typeof options.offset === "number" ? options.offset : 0;
+        const top = target.getBoundingClientRect().top + window.scrollY + offset;
+        window.scrollTo({ top, behavior: "smooth" });
       }
     }
   };

@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { WatchPiece } from "@/data/collection";
-import { SITE_CONFIG } from "@/data/site-config";
+import { SITE_CONFIG, getEnergizedClause } from "@/data/site-config";
 import { useStore } from "@/store/useStore";
 import { ArrowRight, X } from "lucide-react";
 
@@ -129,33 +129,33 @@ export default function ProductModal({
               {/* Copy */}
               <div className="space-y-2">
                 <div className="flex items-baseline justify-between gap-4">
-                  <h2 className="font-display text-3xl sm:text-4xl text-white uppercase">
+                  <h2 className="font-serif font-medium text-3xl sm:text-4xl text-[#F3EFE7] uppercase tracking-[0.03em]">
                     {product.name}
                   </h2>
-                  <span className="font-mono text-xs text-white/55">
+                  <span className="font-mono text-sm text-[#F3EFE7]/65">
                     {SITE_CONFIG.watchPrice}
                   </span>
                 </div>
 
-                <p className="font-sans text-[13px] text-white/85">
+                <p className="font-sans text-[16px] text-[#F3EFE7]/88">
                   {product.intention}
                 </p>
 
-                <p className="font-sans text-[12px] text-white/50 leading-relaxed">
-                  {product.line} Energized by {SITE_CONFIG.practitionerName} before dispatch.
+                <p className="font-sans text-[16px] text-[#F3EFE7]/62 leading-[1.6]">
+                  Cut from natural {product.stone.toLowerCase()}, numbered sequentially, and {getEnergizedClause()}.
                 </p>
 
-                <div className="pt-2 font-mono text-[10px] uppercase tracking-[0.16em] text-white/45">
+                <div className="pt-2 font-mono text-[11px] uppercase tracking-[0.13em] text-[#F3EFE7]/50">
                   DIAL NO. 0001 — 0300 · {SITE_CONFIG.editionLabel}
                 </div>
               </div>
 
               {/* Actions */}
-              <div className="pt-4 border-t border-white/[0.12] flex flex-wrap items-center justify-between gap-4">
+              <div className="pt-4 border-t border-[#F3EFE7]/[0.12] flex flex-wrap items-center justify-between gap-4">
                 <button
                   type="button"
                   onClick={handleAction}
-                  className="px-6 py-3.5 text-[#0A0A0B] font-sans text-[10px] tracking-[0.18em] font-semibold uppercase cursor-pointer transition-opacity hover:opacity-90"
+                  className="px-6 py-3.5 text-[#0A0A0B] font-sans text-[12px] tracking-[0.13em] font-medium uppercase cursor-pointer transition-opacity hover:opacity-90"
                   style={{ backgroundColor: product.colors.accent }}
                 >
                   JOIN WAITLIST · {product.stone.toUpperCase()}
@@ -164,10 +164,10 @@ export default function ProductModal({
                 <Link
                   href={`/watch/${product.id}`}
                   onClick={onClose}
-                  className="group inline-flex items-center gap-3 font-sans text-[10px] uppercase tracking-[0.16em] text-white/80 hover:text-white"
+                  className="group inline-flex items-center gap-3 font-sans text-[12px] font-medium uppercase tracking-[0.13em] text-[#F3EFE7]/85 hover:text-[#F3EFE7]"
                 >
                   <span>DISCOVER {product.name}</span>
-                  <span className="w-9 h-9 rounded-full border border-white/30 flex items-center justify-center group-hover:bg-white group-hover:text-[#0A0A0B] transition-colors">
+                  <span className="w-9 h-9 rounded-full border border-[#F3EFE7]/30 flex items-center justify-center group-hover:bg-[#F3EFE7] group-hover:text-[#0A0A0B] transition-colors">
                     <ArrowRight className="w-3.5 h-3.5" />
                   </span>
                 </Link>

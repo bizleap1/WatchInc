@@ -2,45 +2,54 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Explicit font family utilities so Cormorant Garamond & Jost always resolve cleanly even across dev HMR */
+.font-serif {
+  font-family: var(--font-serif), "Cormorant Garamond", Georgia, serif;
+}
+
+.font-sans {
+  font-family: var(--font-sans), "Jost", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
 :root {
   /* Unified Architectural Base Palettes */
   --bg-base: #0A0A0B;
-  --text-base: #FFFFFF;
+  --text-base: #F3EFE7;
 
   /* Dynamic interpolatable theme variables */
   --theme-bg: #0A0A0B;
-  --theme-text: #FFFFFF;
-  --theme-accent: #E3A93A;
-  --theme-glow: rgba(227, 169, 58, 0.25);
-  --theme-text-muted: rgba(255, 255, 255, 0.5);
-  --theme-border: rgba(255, 255, 255, 0.12);
+  --theme-text: #F3EFE7;
+  --theme-accent: #F3EFE7;
+  --theme-glow: rgba(243, 239, 231, 0.16);
+  --theme-text-muted: rgba(243, 239, 231, 0.62);
+  --theme-border: rgba(243, 239, 231, 0.12);
 
-  /* Six Flat Stone Panel Colours */
+  /* Six Muted Stone Panel Colours */
   --color-citrine-bg: #0A0A0B;
-  --color-citrine-accent: #E3A93A;
-  
+  --color-citrine-accent: #B58E4A;
+
   --color-rosequartz-bg: #0A0A0B;
-  --color-rosequartz-accent: #E7A9B0;
+  --color-rosequartz-accent: #B88B90;
 
   --color-amethyst-bg: #0A0A0B;
-  --color-amethyst-accent: #9B7FD1;
+  --color-amethyst-accent: #8C7BA8;
 
   --color-tigereye-bg: #0A0A0B;
-  --color-tigereye-accent: #B9813B;
+  --color-tigereye-accent: #A3794B;
 
   --color-sunstone-bg: #0A0A0B;
-  --color-sunstone-accent: #E8743B;
+  --color-sunstone-accent: #BF7352;
 
   --color-sodalite-bg: #0A0A0B;
-  --color-sodalite-accent: #3F6FD1;
+  --color-sodalite-accent: #5F7AA8;
 
   --color-selenite-bg: #ECEAE6;
   --color-selenite-text: #0A0A0B;
   --color-selenite-accent: #8F8B84;
 
-  /* Unified Typography Fallbacks (Hero Fonts Only) */
-  --font-display: var(--font-archivo), var(--font-unbounded), sans-serif;
-  --font-mono: var(--font-mono), ui-monospace, SFMono-Regular, monospace;
+  /* Refined Horlogerie Typography */
+  --font-display: var(--font-serif), "Cormorant Garamond", Georgia, serif;
+  --font-mono: var(--font-sans), "Jost", -apple-system, sans-serif;
 }
 
 html {
@@ -95,41 +104,42 @@ body {
   border-right: 1px solid var(--theme-border);
 }
 
-/* Editorial Typography Helpers — Unified Archivo Expanded + Inter + Mono (zero serif/italic) */
+/* Editorial Typography Helpers — Cormorant Garamond 500 + Jost */
 .font-display {
-  font-family: var(--font-archivo), var(--font-unbounded), sans-serif;
-  font-weight: 800;
-  font-stretch: 125%;
-  font-variation-settings: "wdth" 125, "wght" 800;
+  font-family: var(--font-serif), "Cormorant Garamond", Georgia, serif;
+  font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: -0.01em;
-  line-height: 0.92;
+  letter-spacing: 0.03em;
+  line-height: 0.98;
 }
 
 .font-expanded-outline {
-  font-family: var(--font-archivo), var(--font-unbounded), sans-serif;
-  font-weight: 800;
-  font-stretch: 125%;
-  font-variation-settings: "wdth" 125, "wght" 800;
+  font-family: var(--font-serif), "Cormorant Garamond", Georgia, serif;
+  font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: -0.02em;
-  line-height: 0.88;
+  letter-spacing: 0.03em;
+  line-height: 0.96;
   color: transparent;
-  -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.9);
+  -webkit-text-stroke: 1px rgba(243, 239, 231, 0.85);
 }
 
 .font-ui-label {
-  font-family: var(--font-sans), Inter, sans-serif;
+  font-family: var(--font-sans), "Jost", -apple-system, sans-serif;
   text-transform: uppercase;
   letter-spacing: 0.14em;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 500;
 }
 
-.font-dial-mono {
-  font-family: var(--font-mono), "JetBrains Mono", monospace;
-  letter-spacing: 0.14em;
+.font-dial-mono,
+.font-mono {
+  font-family: var(--font-sans), "Jost", -apple-system, sans-serif;
+  font-weight: 500;
   font-variant-numeric: tabular-nums;
+}
+
+.font-dial-mono {
+  letter-spacing: 0.12em;
 }
 
 /* Animated Film Grain Overlay (SVG noise at 4-6% opacity) */
@@ -158,48 +168,46 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(237, 232, 223, 0.2);
+  background: rgba(243, 239, 231, 0.2);
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--theme-accent);
+  background: rgba(243, 239, 231, 0.45);
 }
 
 /* Selection */
 ::selection {
-  background-color: var(--theme-accent);
+  background-color: #F3EFE7;
   color: var(--bg-base);
 }
 
-/* Hero Slider Typography */
+/* Hero Slider Typography — Cormorant Garamond 500 + Jost */
 .font-hero-expanded {
-  font-family: var(--font-archivo), var(--font-unbounded), sans-serif;
-  font-weight: 800;
-  font-stretch: 125%;
-  font-variation-settings: "wdth" 125, "wght" 800;
+  font-family: var(--font-serif), "Cormorant Garamond", Georgia, serif;
+  font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: -0.01em;
-  line-height: 0.92;
+  letter-spacing: 0.03em;
+  line-height: 0.98;
 }
 
 .font-hero-inter {
-  font-family: var(--font-sans), 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: var(--font-sans), "Jost", -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 /* Hero Slider Front-On Watch Flip Target States (identical 1342/2000 aspect ratio -> zero stretch!) */
 .hero-front-resting {
-  right: 5vw;
-  left: auto;
-  bottom: -2vh;
-  top: auto;
-  height: 16vh;
+  left: calc(50% - ((100vh - 64px) * 0.36 * 0.671) / 2);
+  right: auto;
+  top: 5%;
+  bottom: auto;
+  height: 36%;
   aspect-ratio: 1342 / 2000;
   width: auto;
 }
 
 .hero-front-open {
-  left: calc(50% - ((100vh - 72px) * 0.36 * 0.671) / 2);
+  left: calc(50% - ((100vh - 64px) * 0.36 * 0.671) / 2);
   right: auto;
   top: 5%;
   bottom: auto;
@@ -210,17 +218,17 @@ body {
 
 @media (min-width: 768px) {
   .hero-front-resting {
-    right: -16.2vw;
+    right: calc(7vw - ((100vh - 80px) * 0.56 * 0.671) / 2);
     left: auto;
-    top: 7.5%;
+    top: 19%;
     bottom: auto;
-    height: 85%;
+    height: 56%;
     aspect-ratio: 1342 / 2000;
     width: auto;
   }
 
   .hero-front-open {
-    left: calc(32.5vw - ((100vh - 72px) * 0.78 * 0.671) / 2);
+    left: calc(32.5vw - ((100vh - 80px) * 0.78 * 0.671) / 2);
     right: auto;
     top: 11%;
     bottom: auto;

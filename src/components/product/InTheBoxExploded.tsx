@@ -3,7 +3,7 @@
 import React from "react";
 import Image from "next/image";
 import { WatchPiece } from "@/data/collection";
-import { SITE_CONFIG } from "@/data/site-config";
+import { SITE_CONFIG, getPractitionerName } from "@/data/site-config";
 
 interface InTheBoxProps {
   product: WatchPiece;
@@ -23,7 +23,9 @@ export default function InTheBoxExploded({
     {
       index: "02",
       title: "THE RITUAL CARD",
-      detail: `Blind-embossed cotton card bearing the dial number, ${SITE_CONFIG.practitionerName}, and ${SITE_CONFIG.ritualDate}.`,
+      detail: getPractitionerName()
+        ? `Blind-embossed cotton card bearing the dial number, ${getPractitionerName()}, and the ritual date.`
+        : "Blind-embossed cotton card bearing the dial number and dated ritual record.",
     },
     {
       index: "03",
@@ -74,11 +76,11 @@ export default function InTheBoxExploded({
                   >
                     {item.index}
                   </span>
-                  <h3 className="font-sans text-[11px] font-medium uppercase tracking-[0.16em] text-white">
+                  <h3 className="font-sans text-[12px] font-medium uppercase tracking-[0.12em] text-[#F3EFE7]">
                     {item.title}
                   </h3>
                 </div>
-                <p className="font-sans text-[12px] text-white/50 leading-relaxed pl-7">
+                <p className="font-sans text-[16px] text-[#F3EFE7]/65 leading-[1.6] pl-7">
                   {item.detail}
                 </p>
               </div>
