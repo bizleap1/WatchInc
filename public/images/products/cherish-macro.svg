@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 1000 700" width="1000" height="700" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="macroGrad" cx="40%" cy="45%" r="70%">
+      <stop offset="0%" stop-color="#E89BAA"/>
+      <stop offset="60%" stop-color="#592532"/>
+      <stop offset="100%" stop-color="#141312"/>
+    </radialGradient>
+    <filter id="fissureGlow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+  <rect width="1000" height="700" fill="url(#macroGrad)"/>
+  
+  <g opacity="0.65" filter="url(#fissureGlow)">
+    
+    <ellipse cx="500" cy="350" rx="350" ry="250" fill="#FFDEE5" opacity="0.25"/>
+    <path d="M 100,200 Q 500,400 900,250" stroke="#FFFFFF" stroke-width="3" opacity="0.45" fill="none"/>
+    <path d="M 200,500 Q 600,300 850,550" stroke="#FFFFFF" stroke-width="2" opacity="0.4" fill="none"/>
+  
+  </g>
+
+  <!-- Soft vignette edge -->
+  <rect width="1000" height="700" fill="none" stroke="#000000" stroke-width="40" opacity="0.15"/>
+</svg>

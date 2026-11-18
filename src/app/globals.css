@@ -1,0 +1,250 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Unified Architectural Base Palettes */
+  --bg-base: #0A0A0B;
+  --text-base: #FFFFFF;
+
+  /* Dynamic interpolatable theme variables */
+  --theme-bg: #0A0A0B;
+  --theme-text: #FFFFFF;
+  --theme-accent: #E3A93A;
+  --theme-glow: rgba(227, 169, 58, 0.25);
+  --theme-text-muted: rgba(255, 255, 255, 0.5);
+  --theme-border: rgba(255, 255, 255, 0.12);
+
+  /* Six Flat Stone Panel Colours */
+  --color-citrine-bg: #0A0A0B;
+  --color-citrine-accent: #E3A93A;
+  
+  --color-rosequartz-bg: #0A0A0B;
+  --color-rosequartz-accent: #E7A9B0;
+
+  --color-amethyst-bg: #0A0A0B;
+  --color-amethyst-accent: #9B7FD1;
+
+  --color-tigereye-bg: #0A0A0B;
+  --color-tigereye-accent: #B9813B;
+
+  --color-sunstone-bg: #0A0A0B;
+  --color-sunstone-accent: #E8743B;
+
+  --color-sodalite-bg: #0A0A0B;
+  --color-sodalite-accent: #3F6FD1;
+
+  --color-selenite-bg: #ECEAE6;
+  --color-selenite-text: #0A0A0B;
+  --color-selenite-accent: #8F8B84;
+
+  /* Unified Typography Fallbacks (Hero Fonts Only) */
+  --font-display: var(--font-archivo), var(--font-unbounded), sans-serif;
+  --font-mono: var(--font-mono), ui-monospace, SFMono-Regular, monospace;
+}
+
+html {
+  background-color: var(--theme-bg);
+  color: var(--theme-text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  scroll-behavior: auto; /* Managed smoothly via Lenis */
+  transition: background-color 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+              color 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+body {
+  background-color: var(--theme-bg);
+  color: var(--theme-text);
+  overflow-x: hidden;
+  position: relative;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  cursor: auto;
+}
+
+/* 12-Column Editorial Grid System */
+.editorial-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: 1.5rem;
+}
+
+@media (min-width: 1024px) {
+  .editorial-grid {
+    column-gap: 2rem;
+  }
+}
+
+/* 1px Hairline Dividers */
+.hairline-divider-t {
+  border-top: 1px solid var(--theme-border);
+}
+
+.hairline-divider-b {
+  border-bottom: 1px solid var(--theme-border);
+}
+
+.hairline-divider-l {
+  border-left: 1px solid var(--theme-border);
+}
+
+.hairline-divider-r {
+  border-right: 1px solid var(--theme-border);
+}
+
+/* Editorial Typography Helpers — Unified Archivo Expanded + Inter + Mono (zero serif/italic) */
+.font-display {
+  font-family: var(--font-archivo), var(--font-unbounded), sans-serif;
+  font-weight: 800;
+  font-stretch: 125%;
+  font-variation-settings: "wdth" 125, "wght" 800;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  line-height: 0.92;
+}
+
+.font-expanded-outline {
+  font-family: var(--font-archivo), var(--font-unbounded), sans-serif;
+  font-weight: 800;
+  font-stretch: 125%;
+  font-variation-settings: "wdth" 125, "wght" 800;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  line-height: 0.88;
+  color: transparent;
+  -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.9);
+}
+
+.font-ui-label {
+  font-family: var(--font-sans), Inter, sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 10px;
+  font-weight: 500;
+}
+
+.font-dial-mono {
+  font-family: var(--font-mono), "JetBrains Mono", monospace;
+  letter-spacing: 0.14em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Animated Film Grain Overlay (SVG noise at 4-6% opacity) */
+.film-grain-overlay {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.055;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 140px 140px;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-base);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(237, 232, 223, 0.2);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--theme-accent);
+}
+
+/* Selection */
+::selection {
+  background-color: var(--theme-accent);
+  color: var(--bg-base);
+}
+
+/* Hero Slider Typography */
+.font-hero-expanded {
+  font-family: var(--font-archivo), var(--font-unbounded), sans-serif;
+  font-weight: 800;
+  font-stretch: 125%;
+  font-variation-settings: "wdth" 125, "wght" 800;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  line-height: 0.92;
+}
+
+.font-hero-inter {
+  font-family: var(--font-sans), 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Hero Slider Front-On Watch Flip Target States (identical 1342/2000 aspect ratio -> zero stretch!) */
+.hero-front-resting {
+  right: 5vw;
+  left: auto;
+  bottom: -2vh;
+  top: auto;
+  height: 16vh;
+  aspect-ratio: 1342 / 2000;
+  width: auto;
+}
+
+.hero-front-open {
+  left: calc(50% - ((100vh - 72px) * 0.36 * 0.671) / 2);
+  right: auto;
+  top: 5%;
+  bottom: auto;
+  height: 36%;
+  aspect-ratio: 1342 / 2000;
+  width: auto;
+}
+
+@media (min-width: 768px) {
+  .hero-front-resting {
+    right: -16.2vw;
+    left: auto;
+    top: 7.5%;
+    bottom: auto;
+    height: 85%;
+    aspect-ratio: 1342 / 2000;
+    width: auto;
+  }
+
+  .hero-front-open {
+    left: calc(32.5vw - ((100vh - 72px) * 0.78 * 0.671) / 2);
+    right: auto;
+    top: 11%;
+    bottom: auto;
+    height: 78%;
+    aspect-ratio: 1342 / 2000;
+    width: auto;
+  }
+}
+
+/* Accessible Focus States */
+:focus-visible {
+  outline: 1.5px solid var(--theme-accent);
+  outline-offset: 3px;
+}
+
+/* Reduced Motion Safety */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .film-grain-overlay {
+    display: none;
+  }
+}

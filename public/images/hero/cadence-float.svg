@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 200 200" width="200" height="200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="cadence-float-grad" cx="40%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#8FAFC9" stop-opacity="0.95"/>
+      <stop offset="65%" stop-color="#4C6B85" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#242321" stop-opacity="0.2"/>
+    </radialGradient>
+    <filter id="softGlow">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+  <g filter="url(#softGlow)">
+    <polygon points="100,20 160,70 140,150 70,170 30,110 50,45" fill="url(#cadence-float-grad)" stroke="#FFFFFF" stroke-width="1" stroke-opacity="0.6"/>
+    <!-- Facet lines -->
+    <line x1="100" y1="20" x2="105" y2="100" stroke="#FFFFFF" stroke-width="0.8" opacity="0.6"/>
+    <line x1="160" y1="70" x2="105" y2="100" stroke="#FFFFFF" stroke-width="0.8" opacity="0.5"/>
+    <line x1="140" y1="150" x2="105" y2="100" stroke="#FFFFFF" stroke-width="0.8" opacity="0.5"/>
+    <line x1="70" y1="170" x2="105" y2="100" stroke="#FFFFFF" stroke-width="0.8" opacity="0.5"/>
+    <line x1="30" y1="110" x2="105" y2="100" stroke="#FFFFFF" stroke-width="0.8" opacity="0.5"/>
+    <line x1="50" y1="45" x2="105" y2="100" stroke="#FFFFFF" stroke-width="0.8" opacity="0.6"/>
+  </g>
+</svg>

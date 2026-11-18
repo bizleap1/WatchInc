@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 1000 700" width="1000" height="700" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="plateAmbient" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#2B2824" stop-opacity="0.2"/>
+      <stop offset="70%" stop-color="#2B2824" stop-opacity="0.04"/>
+      <stop offset="100%" stop-color="#2B2824" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="seleniteBody" x1="0%" y1="0%" x2="100%" y2="80%">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="35%" stop-color="#F2F3F5"/>
+      <stop offset="70%" stop-color="#E2E6EB"/>
+      <stop offset="100%" stop-color="#CBD1D8"/>
+    </linearGradient>
+    <linearGradient id="plateRim" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.95"/>
+      <stop offset="100%" stop-color="#B0B8C1" stop-opacity="0.6"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Clean Ivory / Soft Linen Still Life Surface -->
+  <rect width="1000" height="700" fill="#F7F4ED"/>
+
+  <!-- Subtle Ambient Glow -->
+  <ellipse cx="500" cy="460" rx="420" ry="180" fill="url(#plateAmbient)"/>
+
+  <!-- Selenite Dish / Resting Slab Base Shadow -->
+  <ellipse cx="490" cy="410" rx="360" ry="140" fill="#2E2B27" opacity="0.14"/>
+
+  <!-- Selenite Plate (Carved natural fibrous gypsum crystal) -->
+  <ellipse cx="480" cy="380" rx="350" ry="130" fill="url(#seleniteBody)" stroke="url(#plateRim)" stroke-width="3"/>
+  <ellipse cx="480" cy="375" rx="320" ry="110" fill="#FFFFFF" fill-opacity="0.6" stroke="#FFFFFF" stroke-width="1.5"/>
+
+  <!-- Natural Fibrous Selenite Linear Striations -->
+  <g stroke="#FFFFFF" stroke-width="1" opacity="0.75">
+    <line x1="220" y1="360" x2="740" y2="360"/>
+    <line x1="200" y1="375" x2="760" y2="375"/>
+    <line x1="230" y1="390" x2="730" y2="390"/>
+    <line x1="260" y1="345" x2="700" y2="345"/>
+    <line x1="280" y1="405" x2="680" y2="405"/>
+  </g>
+
+  <!-- Watch Resting Beside / Partially upon the Selenite Plate -->
+  <g transform="translate(380, 260) scale(0.65)" filter="drop-shadow(0px 12px 20px rgba(0,0,0,0.22))">
+    <!-- Re-use watch miniature outline -->
+    <ellipse cx="400" cy="400" r="180" fill="#DFC89C" stroke="#A68D5B" stroke-width="3"/>
+    <circle cx="400" cy="400" r="150" fill="#F3C456"/>
+    <!-- Citrine quartz texture inside mini watch -->
+    <polygon points="340,320 430,300 460,380 370,410" fill="#FFE599" opacity="0.45"/>
+    <!-- Watch Hands -->
+    <line x1="400" y1="400" x2="360" y2="330" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round"/>
+    <line x1="400" y1="400" x2="450" y2="370" stroke="#FFFFFF" stroke-width="3.5" stroke-linecap="round"/>
+    <circle cx="400" cy="400" r="7" fill="#8C7342"/>
+  </g>
+
+  <!-- Refined Editorial Title / Caption on Still Life -->
+  <text x="500" y="585" font-family="'Cormorant Garamond', Georgia, serif" font-style="italic" font-size="16" letter-spacing="1.5" fill="#696560" text-anchor="middle">Selenite Resting Plate</text>
+  <text x="500" y="610" font-family="'Instrument Sans', sans-serif" font-size="10" letter-spacing="2" fill="#8C8780" text-anchor="middle">OPTIONAL ACCREDITED COMPANION PIECE</text>
+</svg>

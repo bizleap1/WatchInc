@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 900 600" width="900" height="600" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="cardShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="16" stdDeviation="20" flood-color="#1F1D1A" flood-opacity="0.14"/>
+    </filter>
+  </defs>
+
+  <rect width="900" height="600" fill="#FAF7F2"/>
+
+  <!-- Card Body -->
+  <g filter="url(#cardShadow)">
+    <rect x="120" y="80" width="660" height="440" rx="16" fill="#FFFFFF" stroke="#E5DEC9" stroke-width="1.5"/>
+  </g>
+
+  <!-- Double Fine Inset Border -->
+  <rect x="140" y="100" width="620" height="400" rx="10" fill="none" stroke="#ECE4D2" stroke-width="1"/>
+  
+  <!-- Header Wordmark -->
+  <text x="450" y="150" font-family="'Cormorant Garamond', Georgia, serif" font-size="14" letter-spacing="5" fill="#242321" text-anchor="middle">BRAND NAME</text>
+  <text x="450" y="172" font-family="'Instrument Sans', sans-serif" font-size="9" letter-spacing="3" fill="#8C8780" text-anchor="middle">PRACTITIONER ATTESTATION RECORD</text>
+
+  <!-- Horizontal divider -->
+  <line x1="200" y1="195" x2="700" y2="195" stroke="#EAE2D1" stroke-width="1"/>
+
+  <!-- Sample Watermark / Stamp -->
+  <g transform="translate(610, 310) rotate(-14)">
+    <rect x="-65" y="-22" width="130" height="44" rx="4" fill="none" stroke="#C29F5F" stroke-width="1.5" stroke-dasharray="4,2"/>
+    <text x="0" y="6" font-family="'Instrument Sans', sans-serif" font-weight="600" font-size="12" letter-spacing="3" fill="#C29F5F" text-anchor="middle">SAMPLE CARD</text>
+  </g>
+
+  <!-- Field: Dial Identification -->
+  <text x="200" y="245" font-family="'Instrument Sans', sans-serif" font-size="10" letter-spacing="2" fill="#8C8780">SPECIMEN NUMBER</text>
+  <text x="200" y="278" font-family="'Cormorant Garamond', Georgia, serif" font-size="24" letter-spacing="1" fill="#242321">Dial no. 0147</text>
+
+  <!-- Field: Intention -->
+  <text x="200" y="330" font-family="'Instrument Sans', sans-serif" font-size="10" letter-spacing="2" fill="#8C8780">TRADITIONAL INTENTION</text>
+  <text x="200" y="358" font-family="'Cormorant Garamond', Georgia, serif" font-style="italic" font-size="18" fill="#3D3833">Worn for abundance, in the tradition of citrine.</text>
+
+  <!-- Field: Practitioner -->
+  <text x="200" y="415" font-family="'Instrument Sans', sans-serif" font-size="10" letter-spacing="2" fill="#8C8780">PREPARED &amp; ENERGIZED BY</text>
+  <text x="200" y="442" font-family="'Cormorant Garamond', Georgia, serif" font-size="19" fill="#242321">Energized by Elena V. before it ships.</text>
+
+  <!-- Field: Date / Season -->
+  <text x="520" y="415" font-family="'Instrument Sans', sans-serif" font-size="10" letter-spacing="2" fill="#8C8780">SEASON OF DEDICATION</text>
+  <text x="520" y="442" font-family="'Cormorant Garamond', Georgia, serif" font-size="19" fill="#242321">Autumn 2026</text>
+
+  <!-- Bottom Certification Note -->
+  <text x="450" y="480" font-family="'Instrument Sans', sans-serif" font-size="8.5" letter-spacing="1" fill="#A8A29A" text-anchor="middle">This illustrative card accompanies the individually prepared timepiece upon dispatch.</text>
+</svg>
