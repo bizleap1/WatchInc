@@ -42,35 +42,41 @@ export function validateWaitlistInput(data = {}) {
     }
   }
 
-  // Multi-select stone chips
+  // Optional preferred watch: one of the six watches, "undecided", or omitted
   let stones = [];
-  if (Array.isArray(data.stones)) {
+  let preferredWatch = null;
+
+  if (Array.isArray(data.stones) && data.stones.length > 0) {
     stones = data.stones
       .map((s) => String(s).trim().toLowerCase())
       .filter((s) => VALID_WATCH_SLUGS.includes(s));
+    preferredWatch = stones[0] || null;
   } else if (data.preferredWatch && typeof data.preferredWatch === "string") {
     const s = data.preferredWatch.trim().toLowerCase();
     if (VALID_WATCH_SLUGS.includes(s)) {
       stones = [s];
+      preferredWatch = s;
+    } else if (s === "undecided" || s === "help-me-choose") {
+      stones = [];
+      preferredWatch = "undecided";
     }
   }
 
-  // Selenite resting plate interest: "yes" | "no" | "maybe"
+  // Selenite resting plate interest: "yes" | "maybe" | "no" | "unanswered"
   let restingPlateInterest = "unanswered";
-  if (data.restingPlateInterest !== undefined && data.restingPlateInterest !== null) {
+  if (data.restingPlateInterest !== undefined && data.restingPlateInterest !== null && data.restingPlateInterest !== "") {
     const plateVal = String(data.restingPlateInterest).trim().toLowerCase();
-    if (["yes", "no", "maybe"].includes(plateVal)) {
+    if (VALID_PLATE_RESPONSES.includes(plateVal)) {
       restingPlateInterest = plateVal;
-    } else if (plateVal === "unanswered") {
-      restingPlateInterest = "unanswered";
     } else {
-      errors.restingPlateInterest = "Please select Yes, No, or Maybe for the selenite resting plate.";
+      errors.restingPlateInterest = "Please select Yes, Maybe, or No for the selenite resting plate.";
     }
   }
 
-  // Consent validation
-  if (!data.consent) {
-    errors.consent = "You must agree to receive launch updates to join the waitlist.";
+  // Consent defaults to true when submitting the waitlist form unless explicitly false
+  const consent = data.consent === undefined ? true : Boolean(data.consent);
+  if (data.consent === false) {
+    errors.consent = "Please confirm you would like to receive launch updates.";
   }
 
   const isValid = Object.keys(errors).length === 0;
@@ -83,9 +89,9 @@ export function validateWaitlistInput(data = {}) {
           name,
           email: data.email.trim().toLowerCase(),
           stones,
-          preferredWatch: stones[0] || null,
+          preferredWatch,
           restingPlateInterest,
-          consent: Boolean(data.consent),
+          consent,
           timestamp: new Date().toISOString(),
         }
       : null,

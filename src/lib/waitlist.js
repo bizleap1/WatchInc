@@ -145,7 +145,7 @@ export async function persistSubscriber(subscriberData) {
       success: false,
       status: 409,
       duplicate: true,
-      error: "This email address is already registered on our launch waitlist.",
+      error: "This email is already on the waitlist. We’ll email you when the collection opens.",
     };
   }
 
@@ -155,7 +155,7 @@ export async function persistSubscriber(subscriberData) {
     email: normalizedEmail,
     stones: Array.isArray(subscriberData.stones) && subscriberData.stones.length > 0
       ? subscriberData.stones
-      : subscriberData.preferredWatch
+      : subscriberData.preferredWatch && subscriberData.preferredWatch !== "undecided" && subscriberData.preferredWatch !== "help-me-choose"
       ? [subscriberData.preferredWatch]
       : [],
     preferredWatch: subscriberData.preferredWatch || (subscriberData.stones && subscriberData.stones[0]) || null,
@@ -179,6 +179,6 @@ export async function persistSubscriber(subscriberData) {
     status: 201,
     id: newRecord.id,
     createdAt: newRecord.createdAt,
-    message: "You're on the list. Number pending.",
+    message: "You’re on the list. We’ll email you when the collection opens.",
   };
 }
