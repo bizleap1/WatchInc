@@ -83,23 +83,23 @@ export default function FooterSection() {
           </h3>
           <ul className="space-y-3 font-sans text-[12px] uppercase tracking-[0.12em] text-[#F3EFE7]/75">
             <li>
-              <Link href="/watches" className="hover:text-[#F3EFE7] transition-colors">
-                WATCHES
-              </Link>
+              <a href="#collection" className="hover:text-[#F3EFE7] transition-colors">
+                THE COLLECTION
+              </a>
             </li>
             <li>
               <a href="#ritual" className="hover:text-[#F3EFE7] transition-colors">
-                THE RITUAL
+                THE ENERGIZING RITUAL
+              </a>
+            </li>
+            <li>
+              <a href="#dials" className="hover:text-[#F3EFE7] transition-colors">
+                EVERY DIAL IS DIFFERENT
               </a>
             </li>
             <li>
               <a href="#selenite" className="hover:text-[#F3EFE7] transition-colors">
                 SELENITE RESTING PLATE
-              </a>
-            </li>
-            <li>
-              <a href="#worn" className="hover:text-[#F3EFE7] transition-colors">
-                WORN
               </a>
             </li>
           </ul>
