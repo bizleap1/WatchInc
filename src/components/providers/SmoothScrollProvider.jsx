@@ -17,8 +17,38 @@ export default function SmoothScrollProvider({ children, }) {
     const pathname = usePathname();
     const [lenisInstance, setLenisInstance] = useState(null);
     const lenisRef = useRef(null);
-    // Clean up and refresh scroll & triggers on route change
     useEffect(() => {
+        const save = () => {
+            try { sessionStorage.setItem("wi-scroll:" + window.location.pathname, String(Math.round(window.scrollY))); } catch (e) { }
+        };
+        window.addEventListener("pagehide", save);
+        window.addEventListener("beforeunload", save);
+        return () => {
+            window.removeEventListener("pagehide", save);
+            window.removeEventListener("beforeunload", save);
+        };
+    }, []);
+    // Clean up and refresh scroll & triggers on route change.
+    // Skipped on the first load so a reload keeps the visitor where they were.
+    const firstLoadRef = useRef(true);
+    useEffect(() => {
+        if (firstLoadRef.current) {
+            firstLoadRef.current = false;
+            // On a reload, put the visitor back where they were
+            let restoreTimer;
+            try {
+                const nav = performance.getEntriesByType("navigation")[0];
+                const saved = Number(sessionStorage.getItem("wi-scroll:" + pathname));
+                if (nav && nav.type === "reload" && saved > 0) {
+                    restoreTimer = setTimeout(() => {
+                        if (lenisRef.current) lenisRef.current.scrollTo(saved, { immediate: true, force: true });
+                        else window.scrollTo(0, saved);
+                    }, 60);
+                }
+            } catch (e) { }
+            const t = setTimeout(() => ScrollTrigger.refresh(), 180);
+            return () => { clearTimeout(t); clearTimeout(restoreTimer); };
+        }
         if (lenisRef.current) {
             lenisRef.current.scrollTo(0, { immediate: true });
         }
@@ -91,6 +121,6 @@ export default function SmoothScrollProvider({ children, }) {
         }
     };
     return (<SmoothScrollContext.Provider value={{ lenis: lenisInstance, scrollTo }}>
-      {children}
+        {children}
     </SmoothScrollContext.Provider>);
 }
