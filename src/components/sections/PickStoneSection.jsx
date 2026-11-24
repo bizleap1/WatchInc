@@ -53,7 +53,11 @@ const STONES = [
 
 // Plain CSS injected as-is (dangerouslySetInnerHTML) so server and browser HTML match exactly.
 const PICK_STONE_CSS = `
-        .pick-stone { min-height: max(100svh, 560px); }
+        .pick-stone {
+          min-height: auto;
+          padding-top: clamp(24px, 4vh, 48px);
+          padding-bottom: clamp(16px, 3vh, 32px);
+        }
 
         .pick-stone__caustics {
           inset: -6%;
@@ -77,11 +81,11 @@ const PICK_STONE_CSS = `
         /* Mobile frame (lecrec: 392 / 852) */
         .pick-stone__frame {
           width: min(100%, calc(100svh * 392 / 852));
-          aspect-ratio: 392 / 852;
+          aspect-ratio: 392 / 800;
           container-type: inline-size;
         }
         .pick-stone__heading {
-          top: 11%;
+          top: 9%;
           padding-inline: 6cqw;
           color: #1F1D24;
           font-size: calc(10.2cqw - 2px);
@@ -89,7 +93,7 @@ const PICK_STONE_CSS = `
           letter-spacing: -0.02em;
         }
         .pick-stone__caption {
-          bottom: 11%;
+          bottom: 7%;
           padding-inline: 6cqw;
           color: #333541;
           font-size: calc(5.87cqw - 2px);
@@ -117,10 +121,10 @@ const PICK_STONE_CSS = `
         @media (min-width: 750px) {
           .pick-stone__frame {
             width: min(100%, 160svh);
-            aspect-ratio: 1440 / 900;
+            aspect-ratio: 1440 / 760;
           }
-          .pick-stone__heading { top: 17%; font-size: 4.44cqw; line-height: 1.125; }
-          .pick-stone__caption { bottom: 19.5%; font-size: max(1.875cqw, 18px); line-height: 1.26; }
+          .pick-stone__heading { top: 11%; font-size: 4.44cqw; line-height: 1.125; }
+          .pick-stone__caption { bottom: 8%; font-size: max(1.875cqw, 18px); line-height: 1.26; }
           .pick-stone__stone { left: var(--x-d); top: var(--y-d); width: 13%; }
         }
 

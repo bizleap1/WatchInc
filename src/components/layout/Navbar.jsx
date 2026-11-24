@@ -44,6 +44,7 @@ export default function Navbar() {
   const bagCount = cartItems.length || allocations.length;
   const isHomePage = pathname === "/";
   const isTransparent = isHomePage && !isScrolled && !mobileMenuOpen;
+  const isCream = isHomePage && isScrolled && !mobileMenuOpen;
 
   const updateActiveSection = useCallback(() => {
     if (typeof window === "undefined") return;
@@ -108,12 +109,8 @@ export default function Navbar() {
     window.addEventListener("wheel", releaseScrollLock, { passive: true });
     window.addEventListener("touchstart", releaseScrollLock, { passive: true });
 
-    if (lenis) {
-      lenis.on("scroll", (e) => {
-        setIsScrolled((e.scroll || 0) > 30);
-        scheduleUpdate();
-      });
-    }
+    const handleLenisScroll = () => scheduleUpdate();
+    if (lenis) lenis.on("scroll", handleLenisScroll);
 
     return () => {
       if (rafId) window.cancelAnimationFrame(rafId);
@@ -122,7 +119,7 @@ export default function Navbar() {
       window.removeEventListener("wheel", releaseScrollLock);
       window.removeEventListener("touchstart", releaseScrollLock);
       if (lenis) {
-        lenis.off("scroll", scheduleUpdate);
+        lenis.off("scroll", handleLenisScroll);
       }
     };
   }, [lenis, updateActiveSection]);
@@ -285,10 +282,12 @@ export default function Navbar() {
     <>
       <header
         aria-label="Primary navigation"
-        className={`fixed top-0 left-0 right-0 z-[40] h-[64px] md:h-[80px] font-sans transition-[background-color,border-color,backdrop-filter] duration-300 ${
+        className={`wi-navbar ${isCream ? "wi-navbar--cream" : ""} fixed top-0 left-0 right-0 z-[40] h-[64px] md:h-[80px] font-sans transition-[background-color,border-color,backdrop-filter] duration-300 ${
           isTransparent
             ? "bg-transparent border-b border-transparent"
-            : "bg-[#0A0A0B]/92 backdrop-blur-md border-b border-[#F3EFE7]/[0.08]"
+            : isCream
+              ? "bg-[#F3ECE1] border-b border-[#28251f]/10"
+              : "bg-[#0A0A0B] border-b border-[#F3EFE7]/[0.08]"
         }`}
       >
         {/* Subtle top hairline sheen (only visible when not in transparent mode) */}
@@ -299,7 +298,7 @@ export default function Navbar() {
           }`}
         />
 
-        <div className="w-full h-full px-5 md:px-[4vw] grid grid-cols-[auto_1fr_auto] md:grid-cols-3 items-center">
+        <div className="w-full h-full px-5 md:px-[4vw] grid grid-cols-[1fr_auto_1fr] md:grid-cols-3 items-center">
           {/* Left Column:
               - Mobile: Menu Trigger
               - Desktop: Nav Links (WATCHES, THE RITUAL, SELENITE) */}
@@ -401,6 +400,24 @@ export default function Navbar() {
           </div>
         </div>
       </header>
+
+      <style jsx global>{`
+        .wi-navbar--cream button,
+        .wi-navbar--cream a,
+        .wi-navbar--cream button span {
+          color: #28251f;
+          filter: none;
+        }
+        .wi-navbar--cream button:hover,
+        .wi-navbar--cream a:hover { color: #746a5d; }
+        .wi-navbar--cream button:focus-visible,
+        .wi-navbar--cream a:focus-visible { outline-color: #746a5d; }
+        .wi-navbar--cream .nav-underline::after { background-color: currentColor; }
+        .wi-navbar--cream button span[aria-hidden="true"] { background-color: #28251f; }
+        @media (prefers-reduced-motion: reduce) {
+          .wi-navbar { transition: none !important; }
+        }
+      `}</style>
 
       {/* Mobile Navigation Drawer */}
       <AnimatePresence>

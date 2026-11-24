@@ -1,166 +1,68 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import { useRef } from "react";
+import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
-import { ArrowRight } from "lucide-react";
-import { SITE_CONFIG } from "@/data/site-config";
 import { useStore } from "@/store/useStore";
 
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger, useGSAP);
-}
+if (typeof window !== "undefined") gsap.registerPlugin(ScrollTrigger, useGSAP);
 
 export default function WaitlistSection() {
   const sectionRef = useRef(null);
-  const [selectedStone, setSelectedStone] = useState("overflow");
-  const openWaitlist = useStore((s) => s.openWaitlist);
+  const openWaitlist = useStore((state) => state.openWaitlist);
 
-  const activeWatch =
-    SITE_CONFIG.watches.find((w) => w.id === selectedStone) ?? SITE_CONFIG.watches[0];
-
-  useGSAP(
-    () => {
-      if (!sectionRef.current) return;
-      const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      if (reduced) return;
-
-      const revealEls = sectionRef.current.querySelectorAll("[data-waitlist-reveal]");
-      gsap.fromTo(
-        revealEls,
-        { opacity: 0, y: 20 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.85,
-          stagger: 0.07,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: "top 78%",
-            once: true,
-          },
-        }
-      );
-    },
-    { scope: sectionRef }
-  );
+  useGSAP(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    gsap.fromTo(sectionRef.current.querySelectorAll("[data-waitlist-reveal]"),
+      { opacity: 0, y: 18 },
+      { opacity: 1, y: 0, duration: 0.8, stagger: 0.1, ease: "power3.out",
+        scrollTrigger: { trigger: sectionRef.current, start: "top 80%", once: true } }
+    );
+  }, { scope: sectionRef });
 
   return (
-    <section
-      id="waitlist"
-      ref={sectionRef}
-      aria-label="Join the Waitlist"
-      className="relative w-full bg-[#0A0A0B] text-[#F3EFE7] border-t border-[#F3EFE7]/[0.1] py-20 md:py-28 lg:py-32 overflow-hidden"
-    >
-      {/* Subtle stone-tinted ambient glow */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 transition-opacity duration-700"
-        style={{
-          background: `radial-gradient(ellipse 55% 48% at 50% 0%, ${activeWatch.panelColor}15, transparent 70%)`,
-        }}
-      />
-
-      <div className="relative z-10 w-full px-6 md:px-[4vw]">
-        {/* Eyebrow Header */}
-        <div
-          data-waitlist-reveal
-          className="flex flex-wrap items-center justify-between gap-4 pb-8 mb-12 border-b border-[#F3EFE7]/[0.1]"
-        >
-          <div className="flex items-center gap-3">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#F3EFE7]" />
-            <span className="font-sans text-[11px] font-medium uppercase tracking-[0.18em] text-[#F3EFE7]/65">
-              05 &mdash; JOIN THE WAITLIST
-            </span>
+    <section id="waitlist" ref={sectionRef} aria-labelledby="waitlist-heading" className="waitlist-editorial">
+      <div className="waitlist-editorial__content">
+        <p data-waitlist-reveal className="waitlist-editorial__label">THE NEXT CHAPTER</p>
+        <div data-waitlist-reveal className="waitlist-editorial__story">
+          <h2 id="waitlist-heading" className="font-serif">Something personal.<br /><em>Worth waiting for.</em></h2>
+          <div className="waitlist-editorial__stones" aria-label="Six natural stones: Citrine, Rose quartz, Amethyst, Tiger’s eye, Sunstone and Sodalite">
+            {["overflow", "cherish", "hush", "ascent", "wildfire", "cadence"].map((stone) => (
+              <span key={stone} className="waitlist-editorial__swatch"><Image src={`/images/dial-macro-${stone}.webp`} alt="" fill sizes="48px" /></span>
+            ))}
           </div>
-          <span className="font-sans text-[11px] font-normal uppercase tracking-[0.14em] text-[#F3EFE7]/50">
-            PRIVATE RELEASE &middot; INDIVIDUALLY NUMBERED
-          </span>
         </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-end">
-          {/* Left Copy & CTA */}
-          <div className="lg:col-span-6 space-y-6">
-            <h2
-              data-waitlist-reveal
-              className="font-serif font-normal uppercase text-[#F3EFE7] text-[clamp(36px,4.4vw,68px)] leading-[0.96] tracking-[0.02em]"
-            >
-              Join the Waitlist
-              <br />
-              for First Access.
-            </h2>
-
-            <p
-              data-waitlist-reveal
-              className="font-sans text-[16px] md:text-[17px] leading-[1.68] text-[#F3EFE7]/75 max-w-lg"
-            >
-              Select your preferred stone edition. Registered members are notified sequentially
-              as each numbered 38mm batch completes its energizing ritual and is prepared for dispatch.
-            </p>
-
-            <div data-waitlist-reveal className="pt-2 flex flex-wrap items-center gap-6">
-              <button
-                type="button"
-                onClick={() => openWaitlist(selectedStone)}
-                className="group inline-flex items-center gap-3 px-7 py-4 bg-[#F3EFE7] text-[#0A0A0B] hover:bg-white font-sans text-[12px] font-medium uppercase tracking-[0.16em] transition-all duration-300 cursor-pointer shadow-sm hover:shadow-md"
-              >
-                <span>Join the Waitlist &middot; {activeWatch.name}</span>
-                <ArrowRight
-                  size={15}
-                  strokeWidth={1.5}
-                  className="transition-transform duration-300 group-hover:translate-x-1"
-                />
-              </button>
-
-              <span className="font-sans text-[11px] uppercase tracking-[0.14em] text-[#F3EFE7]/50">
-                38MM SOLID STAINLESS STEEL
-              </span>
-            </div>
-          </div>
-
-          {/* Right Six-Stone Selector Grid */}
-          <div data-waitlist-reveal className="lg:col-span-6">
-            <span className="block font-sans text-[11px] font-medium uppercase tracking-[0.16em] text-[#F3EFE7]/55 mb-4">
-              SELECT YOUR EDITION
-            </span>
-
-            <div className="grid grid-cols-2 sm:grid-cols-3 border-t border-l border-[#F3EFE7]/[0.12]">
-              {SITE_CONFIG.watches.map((watch) => {
-                const isSelected = selectedStone === watch.id;
-                return (
-                  <button
-                    key={watch.id}
-                    type="button"
-                    onClick={() => setSelectedStone(watch.id)}
-                    aria-pressed={isSelected}
-                    className={`group relative p-4 sm:p-5 border-r border-b border-[#F3EFE7]/[0.12] text-left transition-colors duration-300 cursor-pointer ${
-                      isSelected
-                        ? "bg-[#F3EFE7]/[0.08]"
-                        : "bg-transparent hover:bg-[#F3EFE7]/[0.03]"
-                    }`}
-                  >
-                    <span
-                      aria-hidden="true"
-                      style={{ backgroundColor: watch.panelColor }}
-                      className={`block h-[2px] mb-4 transition-all duration-300 ${
-                        isSelected ? "w-full opacity-100" : "w-5 opacity-70 group-hover:w-9"
-                      }`}
-                    />
-                    <span className="block font-serif font-normal uppercase text-[20px] leading-none tracking-[0.03em] text-[#F3EFE7]">
-                      {watch.name}
-                    </span>
-                    <span className="block font-sans text-[11px] uppercase tracking-[0.13em] text-[#F3EFE7]/60 mt-1.5">
-                      {watch.stone}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
+        <div data-waitlist-reveal className="waitlist-editorial__action">
+          <p className="waitlist-editorial__description">Be part of the Watch Inc launch.</p>
+          <button type="button" onClick={() => openWaitlist()} className="waitlist-editorial__button">Join the Waitlist</button>
         </div>
       </div>
+      <style jsx>{`
+        .waitlist-editorial { background: #f3ece1; color: #38332d; border-top: 1px solid #ded3c3; padding: 76px max(24px, 5vw) 82px; scroll-margin-top: 80px; }
+        .waitlist-editorial__content { max-width: 1440px; margin: 0 auto; display: grid; grid-template-columns: 1.5fr 1fr; column-gap: 72px; align-items: end; }
+        .waitlist-editorial__label { grid-column: 1 / -1; font-size: 10px; letter-spacing: .2em; color: #746a5d; margin: 0 0 26px; }
+        h2 { font-size: clamp(42px, 4vw, 64px); font-weight: 400; letter-spacing: -.025em; line-height: 1.1; margin: 0; }
+        h2 em { font-weight: 400; color: #88755d; }
+        .waitlist-editorial__stones { display: flex; gap: 9px; margin-top: 28px; }
+        .waitlist-editorial__swatch { position: relative; display: block; width: 46px; height: 32px; overflow: hidden; border-radius: 2px; }
+        .waitlist-editorial__swatch :global(img) { object-fit: cover; }
+        .waitlist-editorial__action { justify-self: end; width: 100%; max-width: 320px; padding-bottom: 4px; }
+        .waitlist-editorial__description { font-size: 14px; line-height: 1.7; color: #665e54; margin: 0 0 24px; }
+        .waitlist-editorial__button { display: flex; align-items: center; justify-content: center; width: 100%; min-height: 52px; padding: 14px 20px; border: 1px solid #38332d; background: #38332d; color: #f3ece1; font-family: inherit; font-size: 11px; font-weight: 400; text-transform: uppercase; letter-spacing: .15em; cursor: pointer; transition: background-color .25s ease, color .25s ease; }
+        .waitlist-editorial__button:focus-visible { outline: 2px solid #746a5d; outline-offset: 5px; }
+        @media (hover: hover) { .waitlist-editorial__button:hover { color: #38332d; background: transparent; } }
+        @media (max-width: 767px) {
+          .waitlist-editorial { padding: 52px 24px 56px; scroll-margin-top: 64px; }
+          .waitlist-editorial__content { grid-template-columns: 1fr; gap: 0; }
+          .waitlist-editorial__label { font-size: 9px; margin-bottom: 24px; }
+          h2 { font-size: clamp(38px, 9vw, 52px); }
+          .waitlist-editorial__action { justify-self: stretch; max-width: none; margin-top: 32px; padding: 0; }
+          .waitlist-editorial__description { font-size: 13px; margin-bottom: 18px; }
+        }
+        @media (prefers-reduced-motion: reduce) { .waitlist-editorial__button { transition: none; } }
+      `}</style>
     </section>
   );
 }
