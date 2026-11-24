@@ -1,6 +1,5 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { collection, getPieceById } from "@/data/collection";
-import WatchDetailClient from "./WatchDetailClient";
 export function generateStaticParams() {
     return collection.map((item) => ({
         id: item.id,
@@ -28,5 +27,7 @@ export default function WatchPage({ params }) {
     if (!piece) {
         notFound();
     }
-    return <WatchDetailClient product={piece}/>;
+    // The product detail now lives in the side drawer on /watches.
+    // Old links (footer, product popup, shared URLs) land there with this watch open.
+    redirect(`/watches?open=${piece.id}`);
 }

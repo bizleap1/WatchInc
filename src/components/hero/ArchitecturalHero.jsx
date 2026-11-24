@@ -275,6 +275,7 @@ let introShownThisLoad = false;
 export default function ArchitecturalHero() {
   const reduced = useReducedMotion();
   const setInspectedPiece = useStore((s) => s.setInspectedPiece);
+  const setHeroWatchId = useStore((s) => s.setHeroWatchId);
   const sectionRef = useRef(null);
   const [index, setIndex] = useState(0);
   const [direction, setDirection] = useState(1);
@@ -309,6 +310,7 @@ export default function ArchitecturalHero() {
   }, [finishIntro]);
 
   const watch = HERO_WATCHES[index];
+  useEffect(() => { setHeroWatchId?.(watch.id); }, [watch.id, setHeroWatchId]);
 
   // Change watch. Wraps around (Cadence → Overflow) and ignores clicks while a turn is playing.
   const go = useCallback((i, dir) => {
@@ -609,20 +611,6 @@ export default function ArchitecturalHero() {
           {!introDone && <BrandIntro onDone={finishIntro} />}
         </AnimatePresence>
 
-        {/* Scroll hint on first slide */}
-        <AnimatePresence>
-          {index === 0 && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 0.7 }}
-              exit={{ opacity: 0 }}
-              className="hidden md:block absolute inset-x-0 text-center bottom-2 z-20 font-sans uppercase text-[9.5px] tracking-[0.3em]"
-              style={{ color: CREAM }}
-            >
-              Scroll
-            </motion.div>
-          )}
-        </AnimatePresence>
       </div>
     </section>
   );

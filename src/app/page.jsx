@@ -6,7 +6,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Navbar from "@/components/layout/Navbar";
 import ArchitecturalHero from "@/components/hero/ArchitecturalHero";
-import CollectionSection from "@/components/sections/CollectionSection";
+import PickStoneSection from "@/components/sections/PickStoneSection";
 import RitualSection from "@/components/sections/RitualSection";
 import DialVariationSection from "@/components/sections/DialVariationSection";
 import SeleniteSection from "@/components/sections/SeleniteSection";
@@ -77,8 +77,8 @@ export default function HomePage() {
         {/* Full-Viewport Cinematic Architectural Hero (Unchanged) */}
         <ArchitecturalHero />
 
-        {/* 1. The Collection (Warm Ivory / Light) */}
-        <CollectionSection />
+        {/* 1. Pick your stone (lecrec-style stone picker) */}
+        <PickStoneSection />
 
         {/* 2. The Energizing Ritual (Contrasting Dark) */}
         <RitualSection />

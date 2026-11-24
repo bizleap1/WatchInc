@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef, useState, useCallback } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState, useCallback } from "react";
 import Image from "next/image";
 import gsap from "gsap";
 import { Flip } from "gsap/Flip";
@@ -16,6 +16,8 @@ if (typeof window !== "undefined") {
     gsap.registerPlugin(Flip, useGSAP);
 }
 const AUTO_SLIDE_INTERVAL_MS = 1500;
+// Layout effect in the browser (runs before paint), plain effect on the server.
+const useIsoLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
 export default function HeroSlider({ isReady = true }) {
     // Ping-pong dual slots for both main slide & right front watch (zero DOM swap -> zero flicker!)
     const [slotSlides, setSlotSlides] = useState([0, 1]);
@@ -616,9 +618,10 @@ export default function HeroSlider({ isReady = true }) {
         if (pushHistory && typeof window !== "undefined") {
             const slide = HERO_SLIDES[activeIndexRef.current];
             if (open) {
-                window.history.pushState({ heroProductOpen: true, watchId: slide.id }, "", `/watch/${slide.id}`);
+                // Keep the visitor on /watches so a refresh re-opens this drawer (not the old /watch/[id] page)
+                window.history.pushState({ heroProductOpen: true, watchId: slide.id }, "", `/watches?open=${slide.id}`);
             }
-            else if (window.location.pathname.startsWith("/watch/")) {
+            else if (new URLSearchParams(window.location.search).has("open")) {
                 window.history.pushState({ heroProductOpen: false }, "", "/watches");
             }
         }
@@ -774,12 +777,90 @@ export default function HeroSlider({ isReady = true }) {
         animateProductState(false, true);
         scheduleAutoSlide();
     }, [animateProductState, scheduleAutoSlide]);
+    // Deep link: /watches?open=<watch id> (from the homepage "Pick your stone" film, a refresh,
+    // a shared link, or the old /watch/<id> URL which now redirects here).
+    // A black cover hides the page while the intro and the drawer animations run at 10x speed,
+    // then fades away, so the visitor lands straight on the open detail drawer.
+    // The id lives in a ref so React Strict Mode's double effect run in dev doesn't lose it.
+    const pendingOpenRef = useRef(undefined);
+    useIsoLayoutEffect(() => {
+        if (pendingOpenRef.current === undefined) {
+            pendingOpenRef.current = new URLSearchParams(window.location.search).get("open");
+        }
+        const id = pendingOpenRef.current;
+        if (!id)
+            return;
+        const idx = HERO_SLIDES.findIndex((sl) => sl.id === id);
+        if (idx < 0) {
+            pendingOpenRef.current = null;
+            return;
+        }
+        // Reuse the cover left by the homepage film, or put one up now (refresh / shared link).
+        let cover = document.getElementById("wi-deeplink-cover");
+        if (!cover) {
+            cover = document.createElement("div");
+            cover.id = "wi-deeplink-cover";
+            cover.setAttribute("aria-hidden", "true");
+            cover.style.cssText = "position:fixed;inset:0;z-index:100000;background:#0A0A0B;pointer-events:none;clip-path:inset(0 0 0 0)";
+            document.body.appendChild(cover);
+            setTimeout(() => cover.remove(), 5000); // safety net
+        }
+        gsap.globalTimeline.timeScale(10);
+        clearAutoTimer();
+        if (idx !== activeIndexRef.current) {
+            activeIndexRef.current = idx;
+            setSlotSlides((prev) => activeSlotRef.current === 0 ? [idx, prev[1]] : [prev[0], idx]);
+        }
+        // Don't trust fixed timings (slow machines / first load): keep checking until the drawer
+        // is really open and its animation has finished, and only then remove the cover.
+        const timers = [];
+        const started = performance.now();
+        let revealed = false;
+        const reveal = () => {
+            if (revealed)
+                return;
+            revealed = true;
+            pendingOpenRef.current = null;
+            gsap.globalTimeline.timeScale(1);
+            // Wipe the cover (the film's last frame) away, revealing the product page from the
+            // left side first, like the drawer does on this page.
+            cover.style.clipPath = "inset(0 0 0 0)";
+            void cover.offsetWidth; // apply the start state before transitioning
+            cover.style.transition = "clip-path 0.9s cubic-bezier(0.65, 0, 0.35, 1), filter 0.9s ease";
+            cover.style.clipPath = "inset(0 100% 0 0)"; // film shrinks toward the left edge as the page enters from the left
+            cover.style.filter = "brightness(0.85)";
+            setTimeout(() => cover.remove(), 950);
+        };
+        const check = () => {
+            const waited = performance.now() - started;
+            const open = isProductOpenRef.current;
+            const busy = isAnimatingRef.current;
+            if (open && !busy) {
+                // one more frame so the drawer and watch image have painted
+                timers.push(setTimeout(reveal, 80));
+                return;
+            }
+            // Ask the drawer to open as soon as nothing else is animating (the intro is done).
+            if (!open && !busy && waited > 250)
+                animateProductState(true, false); // URL is already /watches?open=<id>
+            if (waited > 4000) {
+                reveal(); // give up gracefully, never leave the screen black
+                return;
+            }
+            timers.push(setTimeout(check, 50));
+        };
+        timers.push(setTimeout(check, 50));
+        return () => {
+            timers.forEach(clearTimeout);
+            gsap.globalTimeline.timeScale(1);
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
     // Browser Back / Forward support for /watch/[id] shallow route
     useEffect(() => {
         const onPopState = () => {
-            const path = window.location.pathname;
-            if (path.startsWith("/watch/")) {
-                const id = path.replace("/watch/", "");
+            const id = new URLSearchParams(window.location.search).get("open");
+            if (window.location.pathname === "/watches" && id) {
                 const idx = HERO_SLIDES.findIndex((s) => s.id === id);
                 if (idx >= 0 && idx !== activeIndexRef.current) {
                     activeIndexRef.current = idx;
@@ -977,139 +1058,139 @@ export default function HeroSlider({ isReady = true }) {
         setFilmState({ open: true, origin });
     }, []);
     return (<section id="hero" ref={rootRef} onFocusCapture={handleHeroFocusCapture} onBlurCapture={handleHeroBlurCapture} aria-label="Watch Inc Collection Showcase" aria-roledescription="carousel" className="relative w-full h-screen pt-[64px] md:pt-[80px] bg-[#0A0A0B] text-[#F3EFE7] overflow-hidden select-none font-sans">
-      {/* Preload next & previous slide images eagerly at quality 90 for seamless transitions */}
-      <div className="fixed opacity-0 pointer-events-none -z-50 w-[45vw] h-[88vh] overflow-hidden" aria-hidden="true">
-        <div className="relative w-full h-full">
-          <Image key={`preload-moody-${nextPreloadSlide.id}`} src={nextPreloadSlide.moodySrc} alt="" fill quality={90} loading="eager" sizes="(max-width: 768px) 90vw, 48vw"/>
+        {/* Preload next & previous slide images eagerly at quality 90 for seamless transitions */}
+        <div className="fixed opacity-0 pointer-events-none -z-50 w-[45vw] h-[88vh] overflow-hidden" aria-hidden="true">
+            <div className="relative w-full h-full">
+                <Image key={`preload-moody-${nextPreloadSlide.id}`} src={nextPreloadSlide.moodySrc} alt="" fill quality={90} loading="eager" sizes="(max-width: 768px) 90vw, 48vw" />
+            </div>
+            <div className="relative w-[24vw] h-[85vh]">
+                <Image key={`preload-front-${nextPreloadSlide.id}`} src={nextPreloadSlide.frontSrc} alt="" fill quality={90} loading="eager" sizes="(max-width: 768px) 60vw, 38vw" />
+            </div>
+            <div className="relative w-full h-full">
+                <Image key={`preload-prev-moody-${prevPreloadSlide.id}`} src={prevPreloadSlide.moodySrc} alt="" fill quality={90} loading="eager" sizes="(max-width: 768px) 90vw, 48vw" />
+            </div>
         </div>
-        <div className="relative w-[24vw] h-[85vh]">
-          <Image key={`preload-front-${nextPreloadSlide.id}`} src={nextPreloadSlide.frontSrc} alt="" fill quality={90} loading="eager" sizes="(max-width: 768px) 60vw, 38vw"/>
-        </div>
-        <div className="relative w-full h-full">
-          <Image key={`preload-prev-moody-${prevPreloadSlide.id}`} src={prevPreloadSlide.moodySrc} alt="" fill quality={90} loading="eager" sizes="(max-width: 768px) 90vw, 48vw"/>
-        </div>
-      </div>
 
-      {/* STAGE BELOW NAV: calc(100vh - 64px) mobile / calc(100vh - 80px) desktop */}
-      <div ref={stageRef} onMouseEnter={handleStageMouseEnter} onMouseLeave={handleStageMouseLeave} onWheel={handleWheel} onTouchStart={handleTouchStart} onTouchCancel={handleTouchCancel} onTouchEnd={handleTouchEnd} className="relative w-full h-[calc(100vh-64px)] md:h-[calc(100vh-80px)] overflow-hidden bg-[#0A0A0B] touch-pan-y">
-        {/* RIGHT COLOUR PANEL (14vw desktop; expands on Discover/preview click; hidden when closed on mobile) */}
-        <div ref={panelRef} onClick={() => {
-            if (!isProductOpenRef.current)
-                handleManualNext();
-        }} onMouseEnter={handlePanelEnter} onMouseLeave={handlePanelLeave} style={{ backgroundColor: currentSlide.panelColor }} className="group/panel absolute z-[14] right-0 top-0 w-full md:w-[14vw] h-0 md:h-full cursor-pointer overflow-hidden"/>
+        {/* STAGE BELOW NAV: calc(100vh - 64px) mobile / calc(100vh - 80px) desktop */}
+        <div ref={stageRef} onMouseEnter={handleStageMouseEnter} onMouseLeave={handleStageMouseLeave} onWheel={handleWheel} onTouchStart={handleTouchStart} onTouchCancel={handleTouchCancel} onTouchEnd={handleTouchEnd} className="relative w-full h-[calc(100vh-64px)] md:h-[calc(100vh-80px)] overflow-hidden bg-[#0A0A0B] touch-pan-y">
+            {/* RIGHT COLOUR PANEL (14vw desktop; expands on Discover/preview click; hidden when closed on mobile) */}
+            <div ref={panelRef} onClick={() => {
+                if (!isProductOpenRef.current)
+                    handleManualNext();
+            }} onMouseEnter={handlePanelEnter} onMouseLeave={handlePanelLeave} style={{ backgroundColor: currentSlide.panelColor }} className="group/panel absolute z-[14] right-0 top-0 w-full md:w-[14vw] h-0 md:h-full cursor-pointer overflow-hidden" />
 
-        {/* PERSISTENT PING-PONG FRONT-ON WATCH SLOT 0 (zero unmount -> zero post-slide flicker!) */}
-        <div ref={frontBox0Ref} aria-hidden={activeSlot !== 0} style={{
-            zIndex: activeSlot === 0 ? (isProductLayerActive ? 27 : 15) : 13,
-            visibility: activeSlot === 0 ? "visible" : "hidden",
-            opacity: activeSlot === 0 ? 1 : 0,
-        }} onClick={(e) => {
-            e.stopPropagation();
-            if (activeSlotRef.current === 0 && !isProductOpenRef.current) {
-                handleOpenProduct();
-            }
-        }} onMouseEnter={handlePanelEnter} onMouseLeave={handlePanelLeave} role="button" tabIndex={activeSlot === 0 ? 0 : -1} aria-label={`Open details for ${HERO_SLIDES[slotSlides[0]].titleLine1}`} onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-                e.preventDefault();
-                if (activeSlotRef.current === 0 && !isProductOpenRef.current)
+            {/* PERSISTENT PING-PONG FRONT-ON WATCH SLOT 0 (zero unmount -> zero post-slide flicker!) */}
+            <div ref={frontBox0Ref} aria-hidden={activeSlot !== 0} style={{
+                zIndex: activeSlot === 0 ? (isProductLayerActive ? 27 : 15) : 13,
+                visibility: activeSlot === 0 ? "visible" : "hidden",
+                opacity: activeSlot === 0 ? 1 : 0,
+            }} onClick={(e) => {
+                e.stopPropagation();
+                if (activeSlotRef.current === 0 && !isProductOpenRef.current) {
                     handleOpenProduct();
-            }
-        }} className={`absolute ${isProductLayerActive ? "block" : "hidden md:block"} ${activeSlot === 0 ? "cursor-pointer pointer-events-auto" : "pointer-events-none"} ${activeSlot === 0 && isProductOpen ? "hero-front-open" : "hero-front-resting"}`}>
-          <div ref={frontInner0Ref} className="w-full h-full">
-            <WatchArtwork slide={HERO_SLIDES[slotSlides[0]]} variant="front" priority={slotSlides[0] === 0}/>
-          </div>
-        </div>
+                }
+            }} onMouseEnter={handlePanelEnter} onMouseLeave={handlePanelLeave} role="button" tabIndex={activeSlot === 0 ? 0 : -1} aria-label={`Open details for ${HERO_SLIDES[slotSlides[0]].titleLine1}`} onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    if (activeSlotRef.current === 0 && !isProductOpenRef.current)
+                        handleOpenProduct();
+                }
+            }} className={`absolute ${isProductLayerActive ? "block" : "hidden md:block"} ${activeSlot === 0 ? "cursor-pointer pointer-events-auto" : "pointer-events-none"} ${activeSlot === 0 && isProductOpen ? "hero-front-open" : "hero-front-resting"}`}>
+                <div ref={frontInner0Ref} className="w-full h-full">
+                    <WatchArtwork slide={HERO_SLIDES[slotSlides[0]]} variant="front" priority={slotSlides[0] === 0} />
+                </div>
+            </div>
 
-        {/* PERSISTENT PING-PONG FRONT-ON WATCH SLOT 1 */}
-        <div ref={frontBox1Ref} aria-hidden={activeSlot !== 1} style={{
-            zIndex: activeSlot === 1 ? (isProductLayerActive ? 27 : 15) : 13,
-            visibility: activeSlot === 1 ? "visible" : "hidden",
-            opacity: activeSlot === 1 ? 1 : 0,
-        }} onClick={(e) => {
-            e.stopPropagation();
-            if (activeSlotRef.current === 1 && !isProductOpenRef.current) {
-                handleOpenProduct();
-            }
-        }} onMouseEnter={handlePanelEnter} onMouseLeave={handlePanelLeave} role="button" tabIndex={activeSlot === 1 ? 0 : -1} aria-label={`Open details for ${HERO_SLIDES[slotSlides[1]].titleLine1}`} onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-                e.preventDefault();
-                if (activeSlotRef.current === 1 && !isProductOpenRef.current)
+            {/* PERSISTENT PING-PONG FRONT-ON WATCH SLOT 1 */}
+            <div ref={frontBox1Ref} aria-hidden={activeSlot !== 1} style={{
+                zIndex: activeSlot === 1 ? (isProductLayerActive ? 27 : 15) : 13,
+                visibility: activeSlot === 1 ? "visible" : "hidden",
+                opacity: activeSlot === 1 ? 1 : 0,
+            }} onClick={(e) => {
+                e.stopPropagation();
+                if (activeSlotRef.current === 1 && !isProductOpenRef.current) {
                     handleOpenProduct();
-            }
-        }} className={`absolute ${isProductLayerActive ? "block" : "hidden md:block"} ${activeSlot === 1 ? "cursor-pointer pointer-events-auto" : "pointer-events-none"} ${activeSlot === 1 && isProductOpen ? "hero-front-open" : "hero-front-resting"}`}>
-          <div ref={frontInner1Ref} className="w-full h-full">
-            <WatchArtwork slide={HERO_SLIDES[slotSlides[1]]} variant="front" priority={false}/>
-          </div>
+                }
+            }} onMouseEnter={handlePanelEnter} onMouseLeave={handlePanelLeave} role="button" tabIndex={activeSlot === 1 ? 0 : -1} aria-label={`Open details for ${HERO_SLIDES[slotSlides[1]].titleLine1}`} onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    if (activeSlotRef.current === 1 && !isProductOpenRef.current)
+                        handleOpenProduct();
+                }
+            }} className={`absolute ${isProductLayerActive ? "block" : "hidden md:block"} ${activeSlot === 1 ? "cursor-pointer pointer-events-auto" : "pointer-events-none"} ${activeSlot === 1 && isProductOpen ? "hero-front-open" : "hero-front-resting"}`}>
+                <div ref={frontInner1Ref} className="w-full h-full">
+                    <WatchArtwork slide={HERO_SLIDES[slotSlides[1]]} variant="front" priority={false} />
+                </div>
+            </div>
+
+            {/* PERSISTENT PING-PONG SLIDE SLOT 0 (no DOM unmount on transition complete -> zero text jitter!) */}
+            <div ref={slot0Ref} aria-hidden={activeSlot !== 0} style={{
+                zIndex: activeSlot === 0 ? 16 : 12,
+                visibility: activeSlot === 0 ? "visible" : "hidden",
+            }} className="absolute inset-0 pointer-events-none">
+                <HeroSlideContent slide={HERO_SLIDES[slotSlides[0]]} priority={slotSlides[0] === 0} onOpenProduct={handleOpenProduct} onOpenFilm={handleOpenFilm} interactive={activeSlot === 0 && !isProductOpen} />
+            </div>
+
+            {/* PERSISTENT PING-PONG SLIDE SLOT 1 */}
+            <div ref={slot1Ref} aria-hidden={activeSlot !== 1} style={{
+                zIndex: activeSlot === 1 ? 16 : 12,
+                visibility: activeSlot === 1 ? "visible" : "hidden",
+            }} className="absolute inset-0 pointer-events-none">
+                <HeroSlideContent slide={HERO_SLIDES[slotSlides[1]]} priority={false} onOpenProduct={handleOpenProduct} onOpenFilm={handleOpenFilm} interactive={activeSlot === 1 && !isProductOpen} />
+            </div>
+
+            {/* CURTAIN OVERLAY (sweeps slowly across entire stage during Next/Prev slide transitions) */}
+            <div ref={curtainRef} aria-hidden="true" className="hidden absolute z-[24] pointer-events-none" />
+
+            {/* COLOURED AREA DETAIL CONTROLS (Left vertical tools, ← BACK, 64px Play Button) */}
+            <div ref={detailControlsRef} aria-hidden={!isProductOpen} className="absolute inset-0 z-[28] opacity-0 pointer-events-none">
+                {/* Left vertical icon column (expand, zoom, rotate-360) */}
+                <div className={`absolute left-4 md:left-[3vw] top-[23%] md:top-1/2 -translate-y-1/2 flex flex-col gap-3 ${isProductOpen ? "pointer-events-auto" : "pointer-events-none"}`}>
+                    <button type="button" onClick={handleToggleExpand} aria-label="Expand timepiece view" className={`w-9 h-9 rounded-full border flex items-center justify-center transition-colors cursor-pointer ${isExpandedView
+                        ? "bg-black text-white border-black"
+                        : "border-black/25 text-black/85 hover:bg-black hover:text-white"}`}>
+                        <Maximize2 size={14} strokeWidth={1.4} />
+                    </button>
+
+                    <button type="button" onClick={handleToggleZoom} aria-label={isZoomed ? "Zoom out" : "Zoom in on stone dial"} className={`w-9 h-9 rounded-full border flex items-center justify-center transition-colors cursor-pointer ${isZoomed
+                        ? "bg-black text-white border-black"
+                        : "border-black/25 text-black/85 hover:bg-black hover:text-white"}`}>
+                        {isZoomed ? (<ZoomOut size={14} strokeWidth={1.4} />) : (<ZoomIn size={14} strokeWidth={1.4} />)}
+                    </button>
+
+                    <button type="button" onClick={handleRotate360} aria-label="Rotate timepiece 360 degrees" className="w-9 h-9 rounded-full border border-black/25 text-black/85 hover:bg-black hover:text-white flex items-center justify-center transition-colors cursor-pointer">
+                        <RotateCw size={14} strokeWidth={1.4} />
+                    </button>
+                </div>
+
+                {/* ← BACK at top-right of coloured area */}
+                <button type="button" onClick={handleCloseProduct} className={`absolute top-5 right-5 md:top-[28px] md:right-[calc(35vw+32px)] flex items-center gap-2 text-[10px] font-medium uppercase tracking-[0.14em] text-black hover:opacity-65 transition-opacity cursor-pointer ${isProductOpen ? "pointer-events-auto" : "pointer-events-none"}`}>
+                    <ArrowLeft size={14} strokeWidth={1.5} />
+                    <span>BACK</span>
+                </button>
+
+                {/* 64px Circle Play Button + "WATCH THE FILM" at right-centre of coloured area */}
+                <div className={`hidden md:flex flex-col items-center gap-3 absolute right-[calc(35vw+36px)] top-1/2 -translate-y-1/2 ${isProductOpen ? "pointer-events-auto" : "pointer-events-none"}`}>
+                    <CircleActionButton size={64} variant="dark" ariaLabel={`Watch detail film for ${currentSlide.titleLine1}`} onClick={(e) => {
+                        const rect = e.currentTarget.getBoundingClientRect();
+                        handleOpenFilm({
+                            x: rect.left + rect.width / 2,
+                            y: rect.top + rect.height / 2,
+                        });
+                    }}>
+                        <Play size={18} strokeWidth={1.5} className="translate-x-[1px] fill-current" />
+                    </CircleActionButton>
+                    <span className="font-mono text-[9px] font-medium uppercase tracking-[0.16em] text-black/80">
+                        WATCH THE FILM
+                    </span>
+                </div>
+            </div>
+
+            {/* WHITE DETAILS PANEL (#FFFFFF, width 35vw desktop / bottom sheet mobile) */}
+            <ProductDetailDrawer slide={currentSlide} drawerRef={detailDrawerRef} isOpen={isProductOpen} />
         </div>
 
-        {/* PERSISTENT PING-PONG SLIDE SLOT 0 (no DOM unmount on transition complete -> zero text jitter!) */}
-        <div ref={slot0Ref} aria-hidden={activeSlot !== 0} style={{
-            zIndex: activeSlot === 0 ? 16 : 12,
-            visibility: activeSlot === 0 ? "visible" : "hidden",
-        }} className="absolute inset-0 pointer-events-none">
-          <HeroSlideContent slide={HERO_SLIDES[slotSlides[0]]} priority={slotSlides[0] === 0} onOpenProduct={handleOpenProduct} onOpenFilm={handleOpenFilm} interactive={activeSlot === 0 && !isProductOpen}/>
-        </div>
-
-        {/* PERSISTENT PING-PONG SLIDE SLOT 1 */}
-        <div ref={slot1Ref} aria-hidden={activeSlot !== 1} style={{
-            zIndex: activeSlot === 1 ? 16 : 12,
-            visibility: activeSlot === 1 ? "visible" : "hidden",
-        }} className="absolute inset-0 pointer-events-none">
-          <HeroSlideContent slide={HERO_SLIDES[slotSlides[1]]} priority={false} onOpenProduct={handleOpenProduct} onOpenFilm={handleOpenFilm} interactive={activeSlot === 1 && !isProductOpen}/>
-        </div>
-
-        {/* CURTAIN OVERLAY (sweeps slowly across entire stage during Next/Prev slide transitions) */}
-        <div ref={curtainRef} aria-hidden="true" className="hidden absolute z-[24] pointer-events-none"/>
-
-        {/* COLOURED AREA DETAIL CONTROLS (Left vertical tools, ← BACK, 64px Play Button) */}
-        <div ref={detailControlsRef} aria-hidden={!isProductOpen} className="absolute inset-0 z-[28] opacity-0 pointer-events-none">
-          {/* Left vertical icon column (expand, zoom, rotate-360) */}
-          <div className={`absolute left-4 md:left-[3vw] top-[23%] md:top-1/2 -translate-y-1/2 flex flex-col gap-3 ${isProductOpen ? "pointer-events-auto" : "pointer-events-none"}`}>
-            <button type="button" onClick={handleToggleExpand} aria-label="Expand timepiece view" className={`w-9 h-9 rounded-full border flex items-center justify-center transition-colors cursor-pointer ${isExpandedView
-            ? "bg-black text-white border-black"
-            : "border-black/25 text-black/85 hover:bg-black hover:text-white"}`}>
-              <Maximize2 size={14} strokeWidth={1.4}/>
-            </button>
-
-            <button type="button" onClick={handleToggleZoom} aria-label={isZoomed ? "Zoom out" : "Zoom in on stone dial"} className={`w-9 h-9 rounded-full border flex items-center justify-center transition-colors cursor-pointer ${isZoomed
-            ? "bg-black text-white border-black"
-            : "border-black/25 text-black/85 hover:bg-black hover:text-white"}`}>
-              {isZoomed ? (<ZoomOut size={14} strokeWidth={1.4}/>) : (<ZoomIn size={14} strokeWidth={1.4}/>)}
-            </button>
-
-            <button type="button" onClick={handleRotate360} aria-label="Rotate timepiece 360 degrees" className="w-9 h-9 rounded-full border border-black/25 text-black/85 hover:bg-black hover:text-white flex items-center justify-center transition-colors cursor-pointer">
-              <RotateCw size={14} strokeWidth={1.4}/>
-            </button>
-          </div>
-
-          {/* ← BACK at top-right of coloured area */}
-          <button type="button" onClick={handleCloseProduct} className={`absolute top-5 right-5 md:top-[28px] md:right-[calc(35vw+32px)] flex items-center gap-2 text-[10px] font-medium uppercase tracking-[0.14em] text-black hover:opacity-65 transition-opacity cursor-pointer ${isProductOpen ? "pointer-events-auto" : "pointer-events-none"}`}>
-            <ArrowLeft size={14} strokeWidth={1.5}/>
-            <span>BACK</span>
-          </button>
-
-          {/* 64px Circle Play Button + "WATCH THE FILM" at right-centre of coloured area */}
-          <div className={`hidden md:flex flex-col items-center gap-3 absolute right-[calc(35vw+36px)] top-1/2 -translate-y-1/2 ${isProductOpen ? "pointer-events-auto" : "pointer-events-none"}`}>
-            <CircleActionButton size={64} variant="dark" ariaLabel={`Watch detail film for ${currentSlide.titleLine1}`} onClick={(e) => {
-            const rect = e.currentTarget.getBoundingClientRect();
-            handleOpenFilm({
-                x: rect.left + rect.width / 2,
-                y: rect.top + rect.height / 2,
-            });
-        }}>
-              <Play size={18} strokeWidth={1.5} className="translate-x-[1px] fill-current"/>
-            </CircleActionButton>
-            <span className="font-mono text-[9px] font-medium uppercase tracking-[0.16em] text-black/80">
-              WATCH THE FILM
-            </span>
-          </div>
-        </div>
-
-        {/* WHITE DETAILS PANEL (#FFFFFF, width 35vw desktop / bottom sheet mobile) */}
-        <ProductDetailDrawer slide={currentSlide} drawerRef={detailDrawerRef} isOpen={isProductOpen}/>
-      </div>
-
-      {/* FULLSCREEN FILM OVERLAY (#0F3350, clip-path circle expand from play button) */}
-      <FilmOverlay slide={currentSlide} isOpen={filmState.open} origin={filmState.origin} onClose={() => setFilmState((prev) => ({ ...prev, open: false }))}/>
+        {/* FULLSCREEN FILM OVERLAY (#0F3350, clip-path circle expand from play button) */}
+        <FilmOverlay slide={currentSlide} isOpen={filmState.open} origin={filmState.origin} onClose={() => setFilmState((prev) => ({ ...prev, open: false }))} />
     </section>);
 }

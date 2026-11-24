@@ -11,6 +11,9 @@ export const useStore = create((set) => ({
     // Waitlist Modal
     isWaitlistOpen: false,
     waitlistPreselect: null,
+    // Watch currently shown in the hero — used to preselect it in the waitlist form
+    heroWatchId: "overflow",
+    setHeroWatchId: (id) => set({ heroWatchId: id }),
     openWaitlist: (stone = null) => set({ isWaitlistOpen: true, waitlistPreselect: stone }),
     closeWaitlist: () => set({ isWaitlistOpen: false }),
     isCartOpen: false,
