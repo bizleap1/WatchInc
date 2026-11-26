@@ -17,7 +17,7 @@ export const HERO_SLIDES = [
         pricePlaceholder: "₹ {PRICE}",
         moodySrc: "/watches/overflow/diagonal.webp",
         frontSrc: "/watches/overflow/front.webp",
-        filmSrc: "/films/overflow.mp4",
+        filmSrc: "/videos/overflow.mp4",
         detailSpecs: {
             caseSize: "38MM brushed stainless steel",
             dialMaterial: "Natural cut citrine stone — no two dials alike",
@@ -41,7 +41,7 @@ export const HERO_SLIDES = [
         pricePlaceholder: "₹ {PRICE}",
         moodySrc: "/watches/cherish/diagonal.webp",
         frontSrc: "/watches/cherish/front.webp",
-        filmSrc: "/films/cherish.mp4",
+        filmSrc: "/videos/cherish.mp4",
         detailSpecs: {
             caseSize: "38MM brushed stainless steel",
             dialMaterial: "Natural cut rose quartz stone — no two dials alike",
@@ -65,7 +65,7 @@ export const HERO_SLIDES = [
         pricePlaceholder: "₹ {PRICE}",
         moodySrc: "/watches/hush/diagonal.webp",
         frontSrc: "/watches/hush/front.webp",
-        filmSrc: "/films/hush.mp4",
+        filmSrc: "/videos/hush.mp4",
         detailSpecs: {
             caseSize: "38MM brushed stainless steel",
             dialMaterial: "Natural cut amethyst stone — no two dials alike",
@@ -89,7 +89,7 @@ export const HERO_SLIDES = [
         pricePlaceholder: "₹ {PRICE}",
         moodySrc: "/watches/ascent/diagonal.webp",
         frontSrc: "/watches/ascent/front.webp",
-        filmSrc: "/films/ascent.mp4",
+        filmSrc: "/videos/ascent.mp4",
         detailSpecs: {
             caseSize: "38MM brushed stainless steel",
             dialMaterial: "Natural cut tiger's eye stone — no two dials alike",
@@ -113,7 +113,7 @@ export const HERO_SLIDES = [
         pricePlaceholder: "₹ {PRICE}",
         moodySrc: "/watches/wildfire/diagonal.webp",
         frontSrc: "/watches/wildfire/front.webp",
-        filmSrc: "/films/wildfire.mp4",
+        filmSrc: "/videos/wildfire.mp4",
         detailSpecs: {
             caseSize: "38MM brushed stainless steel",
             dialMaterial: "Natural cut sunstone — no two dials alike",
@@ -137,7 +137,7 @@ export const HERO_SLIDES = [
         pricePlaceholder: "₹ {PRICE}",
         moodySrc: "/watches/cadence/diagonal.webp",
         frontSrc: "/watches/cadence/front.webp",
-        filmSrc: "/films/cadence.mp4",
+        filmSrc: "/videos/cadence.mp4",
         detailSpecs: {
             caseSize: "38MM brushed stainless steel",
             dialMaterial: "Natural cut sodalite stone — no two dials alike",

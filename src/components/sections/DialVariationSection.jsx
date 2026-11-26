@@ -13,7 +13,13 @@ const STONES = [
 ];
 
 export default function DialVariationSection() {
-  const [selected, setSelected] = useState("cadence");
+  const [selected, setSelectedState] = useState("cadence");
+  const [previous, setPrevious] = useState(null);
+  const setSelected = (id) => {
+    if (id === selected) return;
+    setPrevious(selected);
+    setSelectedState(id);
+  };
   const active = STONES.find((stone) => stone.id === selected);
 
   return (
@@ -25,8 +31,10 @@ export default function DialVariationSection() {
       </div>
 
       <div className="dial-variation__panel relative w-full overflow-hidden bg-[#242329]" role="img" aria-label={`Natural ${active.stone} texture close-up`}>
-        {STONES.map((stone) => (
-          <Image key={stone.id} src={`/images/dial-macro-${stone.id}.webp`} alt="" fill sizes="100vw" quality={90} aria-hidden="true" className={`object-cover transition-opacity duration-700 motion-reduce:transition-none ${selected === stone.id ? "opacity-100" : "opacity-0"}`} />
+        {/* Only the selected stone (and the one fading out) is rendered. Keeping all six full-width
+            stone close-ups in the page made Chrome flash them over the hero intro on page load. */}
+        {STONES.filter((stone) => stone.id === selected || stone.id === previous).map((stone) => (
+          <Image key={stone.id} src={`/images/dial-macro-${stone.id}.webp`} alt="" fill sizes="100vw" loading="lazy" aria-hidden="true" className={`object-cover transition-opacity duration-700 motion-reduce:transition-none ${selected === stone.id ? "opacity-100" : "opacity-0"}`} />
         ))}
       </div>
 

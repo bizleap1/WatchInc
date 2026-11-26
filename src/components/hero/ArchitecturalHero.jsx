@@ -145,14 +145,18 @@ function loadSpin(spin) {
   return p;
 }
 
-// Load the first watch's frames on their own, then the others one watch at a time,
-// so the opening spin isn't stuck in a queue behind ~500 other images.
-let preloadStarted = false;
-function preloadAllSpins(list) {
-  if (preloadStarted) return;
-  preloadStarted = true;
-  const withSpin = list.filter((w) => w.spin);
-  withSpin.reduce((chain, w) => chain.then(() => loadSpin(w.spin)), Promise.resolve());
+// Keep decoded spin frames only for the watch on screen and its two neighbours.
+// Decoding all six watches at once (~550 frames, ~1GB of bitmaps) overloaded the GPU memory
+// during the intro, and Chrome painted garbage tiles — zoomed-in stone dials — over the hero.
+function warmSpins(list, index) {
+  const n = list.length;
+  const keep = [index, (index + 1) % n, (index - 1 + n) % n].map((i) => list[i]).filter((w) => w.spin);
+  const keepDirs = new Set(keep.map((w) => w.spin.dir));
+  for (const dir of Array.from(spinCache.keys())) {
+    if (!keepDirs.has(dir)) spinCache.delete(dir);
+  }
+  // one watch at a time, current first
+  keep.reduce((chain, w) => chain.then(() => loadSpin(w.spin)), Promise.resolve());
 }
 
 const easeInOut = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
@@ -426,8 +430,13 @@ export default function ArchitecturalHero() {
     if (piece) setInspectedPiece(piece);
   };
 
-  // Decode every watch's spin frames in the background
-  useEffect(() => { preloadAllSpins(HERO_WATCHES); }, []);
+  // Decode spin frames for the current watch and its neighbours — only after the intro,
+  // so nothing heavy is decoded while the intro is on screen.
+  useEffect(() => {
+    if (!introDone) return;
+    const t = setTimeout(() => warmSpins(HERO_WATCHES, index), 300);
+    return () => clearTimeout(t);
+  }, [introDone, index]);
 
   // Preload watch images
   useEffect(() => {
@@ -448,12 +457,9 @@ export default function ArchitecturalHero() {
     >
       <div className="relative h-full w-full overflow-hidden select-none">
         {/* ===== World background: crossfade + slow push-in ===== */}
-        <motion.div
-          className="absolute inset-0"
-          initial={{ scale: 1.12 }}
-          animate={{ scale: introDone ? 1 : 1.06 }}
-          transition={{ duration: introDone ? 1.4 : 2.8, ease: EASE }}
-        >
+        {/* No scale/zoom animation on this full-screen layer: animating a transform on it made
+            Chrome paint the wrong GPU texture (stone dial close-ups) behind the intro. */}
+        <div className="absolute inset-0">
           {/* Intro dimming is a plain dark layer (opacity only). A CSS blur/brightness filter on
               this full-screen image caused the blue vertical streaks in Chrome during the intro. */}
           {/* Czard-style 360° room turn: current scene on the front of a sphere, next behind */}
@@ -493,7 +499,7 @@ export default function ArchitecturalHero() {
             animate={{ opacity: introDone ? 0 : 0.25 }}
             transition={{ duration: introDone ? 1.4 : 2.8, ease: EASE }}
           />
-        </motion.div>
+        </div>
 
         {/* ===== Foreground (appears once the intro lifts) ===== */}
         <motion.div

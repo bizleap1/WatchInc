@@ -72,31 +72,10 @@ export default function PrelaunchWaitlistModal({ initialStone, }) {
     }
     setIsSubmitting(true);
     try {
-      const res = await fetch("/api/waitlist", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: name.trim(),
-          email: trimmedEmail,
-          preferredWatch: preferredWatch || null,
-          stones: preferredWatch && preferredWatch !== "undecided"
-            ? [preferredWatch]
-            : [],
-          restingPlateInterest: restingPlateInterest || null,
-          consent: true,
-        }),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        if (res.status === 409 || data.duplicate) {
-          setErrorMessage(data.error ||
-            "This email is already on the waitlist. We’ll email you when the collection opens.");
-        }
-        else {
-          setErrorMessage(data.error || "Unable to join the waitlist. Please try again.");
-        }
-        return;
-      }
+      // Static site — no form backend yet, so nothing is sent anywhere.
+      // When a form service is added later, send the data here before showing success.
+      setErrorMessage("The waitlist opens soon. Please check back in a few days.");
+      return;
       // Compute label for the success screen recap
       let preferredWatchLabel = "Not specified";
       if (preferredWatch === "undecided") {
