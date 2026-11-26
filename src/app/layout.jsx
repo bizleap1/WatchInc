@@ -20,6 +20,8 @@ export const metadata = {
 export default function RootLayout({ children, }) {
   return (<html lang="en" className="dark">
     <head>
+      {/* First hero scene: needed the moment the page paints (shown behind the intro) */}
+      <link rel="preload" as="image" href="/images/hero/scenes/overflow.webp" fetchPriority="high" />
       <link rel="preconnect" href="https://fonts.googleapis.com" />
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       <link

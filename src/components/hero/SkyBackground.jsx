@@ -66,10 +66,9 @@ const FRAG = /* glsl */ `
 
 const easeInOut = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 
-export default function SkyBackground({ scenes, index, direction = 1, duration = 1000, className = "", onReady }) {
-    const [ready, setReady] = React.useState(false);
-    const onReadyRef = useRef(onReady);
-    onReadyRef.current = onReady;
+export default function SkyBackground({ scenes, index, direction = 1, duration = 1000, className = "" }) {
+    // The canvas is only shown while a turn is playing; at rest the hero's plain <img> shows the scene.
+    const [visible, setVisible] = React.useState(false);
     const hostRef = useRef(null);
     const stateRef = useRef(null);
 
@@ -78,12 +77,14 @@ export default function SkyBackground({ scenes, index, direction = 1, duration =
         const host = hostRef.current;
         if (!host) return;
 
-        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: "high-performance" });
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
+        renderer.setClearColor(0x000000, 0);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
         renderer.outputColorSpace = THREE.SRGBColorSpace;
         renderer.domElement.style.width = "100%";
         renderer.domElement.style.height = "100%";
         renderer.domElement.style.display = "block";
+        renderer.domElement.style.visibility = "hidden";
         host.appendChild(renderer.domElement);
 
         const scene = new THREE.Scene();
@@ -94,9 +95,8 @@ export default function SkyBackground({ scenes, index, direction = 1, duration =
         const textures = scenes.map((src) => {
             const t = loader.load(src, (tx) => {
                 st.imgAspect[src] = tx.image.width / tx.image.height;
-                st.resize();
+                st.fit();
                 st.dirty = true;
-                if (src === scenes[st.current]) st.pendingReady = true;
             });
             t.colorSpace = THREE.SRGBColorSpace;
             t.wrapS = THREE.ClampToEdgeWrapping;
@@ -119,12 +119,9 @@ export default function SkyBackground({ scenes, index, direction = 1, duration =
         const st = {
             renderer, camera, scene, uniforms, textures,
             current: index, anim: null, dirty: true, raf: 0, imgAspect: {},
-            resize() {
-                const w = host.clientWidth || 1;
-                const h = host.clientHeight || 1;
-                renderer.setSize(w, h, false);
-                camera.aspect = w / h;
-                camera.updateProjectionMatrix();
+            w: 0,
+            h: 0,
+            fit() {
                 // cover-fit the image to the viewport, in tan-space
                 const ty = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
                 const tx = ty * camera.aspect;
@@ -132,6 +129,21 @@ export default function SkyBackground({ scenes, index, direction = 1, duration =
                 if (tx / ty > ia) uniforms.uHalf.value.set(tx, tx / ia);
                 else uniforms.uHalf.value.set(ty * ia, ty);
                 st.dirty = true;
+            },
+            resize() {
+                const w = host.clientWidth;
+                const h = host.clientHeight;
+                if (w < 10 || h < 10) return; // not laid out yet — the ResizeObserver will call again
+                // Only touch the canvas size when the viewport really changed — resizing a canvas
+                // wipes it for a frame, which showed up as a flicker while scenes were loading.
+                if (w !== st.w || h !== st.h) {
+                    st.w = w;
+                    st.h = h;
+                    renderer.setSize(w, h, false);
+                    camera.aspect = w / h;
+                    camera.updateProjectionMatrix();
+                }
+                st.fit();
             },
         };
         stateRef.current = st;
@@ -146,15 +158,16 @@ export default function SkyBackground({ scenes, index, direction = 1, duration =
                     uniforms.texA.value = textures[st.anim.target];
                     uniforms.uRot.value = 0;
                     st.anim = null;
+                    st.hideAfterRender = true; // draw the settled frame, then hand back to the <img>
                 }
             }
-            if (st.dirty) {
+            if (st.dirty && st.w >= 10) {
                 renderer.render(scene, camera);
                 st.dirty = false;
-                if (st.pendingReady) {
-                    st.pendingReady = false;
-                    setReady(true);
-                    onReadyRef.current && onReadyRef.current();
+                renderer.domElement.style.visibility = "visible";
+                if (st.hideAfterRender) {
+                    st.hideAfterRender = false;
+                    setVisible(false);
                 }
             }
             st.raf = requestAnimationFrame(loop);
@@ -193,18 +206,18 @@ export default function SkyBackground({ scenes, index, direction = 1, duration =
         } else {
             st.uniforms.uRot.value = 0;
             st.anim = { start: performance.now(), duration, to: direction > 0 ? Math.PI : -Math.PI, target: index };
+            // only take over from the <img> if the canvas has a real size and the scenes are loaded
+            if (st.w >= 10 && st.textures[index].image && st.uniforms.texA.value.image) setVisible(true);
         }
         st.resize();
     }, [index, direction, duration]);
 
-    // Canvas stays invisible until the first scene has actually been drawn, so the plain image
-    // underneath (rendered by the hero) shows instantly instead of a black frame.
     return (
         <div
             ref={hostRef}
             aria-hidden="true"
-            className={`absolute inset-0 transition-opacity duration-500 ${className}`}
-            style={{ opacity: ready ? 1 : 0 }}
+            className={`absolute inset-0 ${className}`}
+            style={{ opacity: visible ? 1 : 0 }}
         />
     );
 }

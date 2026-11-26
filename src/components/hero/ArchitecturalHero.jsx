@@ -282,6 +282,18 @@ export default function ArchitecturalHero() {
   const indexRef = useRef(0);
   const busyRef = useRef(false);
   const [turning, setTurning] = useState(false);
+  // The 3D room-turn canvas is shown ONLY while a turn is playing. At every other moment
+  // (page load, reload, resting) it is fully hidden, so the plain image is all you see.
+  const [skyOn, setSkyOn] = useState(false);
+  const [skyMounted, setSkyMounted] = useState(false);
+  useEffect(() => {
+    // Create the WebGL view only after the page has fully loaded and settled.
+    let t;
+    const start = () => { t = setTimeout(() => setSkyMounted(true), 800); };
+    if (document.readyState === "complete") start();
+    else window.addEventListener("load", start, { once: true });
+    return () => { clearTimeout(t); window.removeEventListener("load", start); };
+  }, []);
 
   // ---- Brand intro: ~2.4s on every fresh page load, any gesture skips it ----
   const [introDone, setIntroDone] = useState(introShownThisLoad);
@@ -319,10 +331,12 @@ export default function ArchitecturalHero() {
     if (nextIndex === indexRef.current) return;
     busyRef.current = true;
     setTurning(true);
+    setSkyOn(true);
     setDirection(dir);
     indexRef.current = nextIndex;
     setIndex(nextIndex);
     setTimeout(() => setTurning(false), SPIN_MS - 150);
+    setTimeout(() => setSkyOn(false), SPIN_MS + 120);
     setTimeout(() => { busyRef.current = false; }, SPIN_MS + 150);
   }, []);
 
@@ -436,31 +450,49 @@ export default function ArchitecturalHero() {
         {/* ===== World background: crossfade + slow push-in ===== */}
         <motion.div
           className="absolute inset-0"
-          initial={{ scale: 1.22, filter: "blur(14px) brightness(0.7)" }}
-          animate={introDone ? { scale: 1, filter: "blur(0px) brightness(1)" } : { scale: 1.08, filter: "blur(3px) brightness(0.85)" }}
+          initial={{ scale: 1.12 }}
+          animate={{ scale: introDone ? 1 : 1.06 }}
           transition={{ duration: introDone ? 1.4 : 2.8, ease: EASE }}
         >
+          {/* Intro dimming is a plain dark layer (opacity only). A CSS blur/brightness filter on
+              this full-screen image caused the blue vertical streaks in Chrome during the intro. */}
           {/* Czard-style 360° room turn: current scene on the front of a sphere, next behind */}
           {/* Instant plain image (preloaded by Next) — visible during the intro and until the 3D view is ready */}
-          <Image
-            src={HERO_WATCHES[0].bgSrc}
+          {/* The scene at rest is a plain image (instant, no WebGL). The 3D canvas above it only
+              appears while the room is turning, then hands back to this image. */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={watch.bgSrc}
             alt=""
             aria-hidden="true"
-            fill
-            priority
-            quality={85}
-            sizes="100vw"
-            className="object-cover"
+            draggable={false}
+            fetchPriority={index === 0 ? "high" : "auto"}
+            className="absolute inset-0 w-full h-full object-cover"
           />
-          <SkyBackground
-            scenes={HERO_WATCHES.map((w) => w.bgSrc)}
-            index={index}
-            direction={direction}
-            duration={SPIN_MS}
-          />
+          {/* The 3D room-turn is only created after the intro, so nothing WebGL can show during it */}
+          {skyMounted && (
+            <div
+              aria-hidden="true"
+              className="absolute inset-0"
+              style={{ visibility: skyOn ? "visible" : "hidden", opacity: skyOn ? 1 : 0 }}
+            >
+              <SkyBackground
+                scenes={HERO_WATCHES.map((w) => w.bgSrc)}
+                index={index}
+                direction={direction}
+                duration={SPIN_MS}
+              />
+            </div>
+          )}
           <div aria-hidden="true" className="absolute inset-x-0 top-0 h-[52%] md:h-[26%] bg-gradient-to-b from-[rgba(10,8,5,0.6)] via-[rgba(10,8,5,0.38)] md:from-[rgba(10,8,5,0.45)] md:via-transparent to-transparent pointer-events-none" />
           <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-[22%] bg-gradient-to-t from-[rgba(10,8,5,0.4)] to-transparent pointer-events-none" />
-
+          <motion.div
+            aria-hidden="true"
+            className="absolute inset-0 bg-[#0A0805] pointer-events-none"
+            initial={{ opacity: 0.45 }}
+            animate={{ opacity: introDone ? 0 : 0.25 }}
+            transition={{ duration: introDone ? 1.4 : 2.8, ease: EASE }}
+          />
         </motion.div>
 
         {/* ===== Foreground (appears once the intro lifts) ===== */}
