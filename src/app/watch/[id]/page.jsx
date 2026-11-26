@@ -27,7 +27,6 @@ export default function WatchPage({ params }) {
     if (!piece) {
         notFound();
     }
-    // The product detail now lives in the side drawer on /watches.
-    // Old links (footer, product popup, shared URLs) land there with this watch open.
+    // Keep legacy product links on the existing gallery PDP.
     redirect(`/watches?open=${piece.id}`);
 }

@@ -1,6 +1,5 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { collection, getPieceById } from "@/data/collection";
-import WatchDetailClient from "@/app/watch/[id]/WatchDetailClient";
 export function generateStaticParams() {
     return collection.map((item) => ({
         slug: item.id,
@@ -23,5 +22,5 @@ export default function CollectionSlugPage({ params }) {
     if (!product) {
         notFound();
     }
-    return <WatchDetailClient product={product}/>;
+    redirect(`/watches?open=${product.id}`);
 }

@@ -1,6 +1,8 @@
 "use client";
 import React, { useEffect, useLayoutEffect, useRef, useState, useCallback } from "react";
 import Image from "next/image";
+import ProductStorySections from "@/components/product/ProductStorySections";
+import { collection } from "@/data/collection";
 import gsap from "gsap";
 import { Flip } from "gsap/Flip";
 import { useGSAP } from "@gsap/react";
@@ -1057,7 +1059,7 @@ export default function HeroSlider({ isReady = true }) {
     const handleOpenFilm = useCallback((origin) => {
         setFilmState({ open: true, origin });
     }, []);
-    return (<section id="hero" ref={rootRef} onFocusCapture={handleHeroFocusCapture} onBlurCapture={handleHeroBlurCapture} aria-label="Watch Inc Collection Showcase" aria-roledescription="carousel" className="relative w-full h-screen pt-[64px] md:pt-[80px] bg-[#0A0A0B] text-[#F3EFE7] overflow-hidden select-none font-sans">
+    return (<><section id="hero" ref={rootRef} onFocusCapture={handleHeroFocusCapture} onBlurCapture={handleHeroBlurCapture} aria-label="Watch Inc Collection Showcase" aria-roledescription="carousel" className="relative w-full h-screen pt-[64px] md:pt-[80px] bg-[#0A0A0B] text-[#F3EFE7] overflow-hidden select-none font-sans">
         {/* Preload next & previous slide images eagerly at quality 90 for seamless transitions */}
         <div className="fixed opacity-0 pointer-events-none -z-50 w-[45vw] h-[88vh] overflow-hidden" aria-hidden="true">
             <div className="relative w-full h-full">
@@ -1192,5 +1194,7 @@ export default function HeroSlider({ isReady = true }) {
 
         {/* FULLSCREEN FILM OVERLAY (#0F3350, clip-path circle expand from play button) */}
         <FilmOverlay slide={currentSlide} isOpen={filmState.open} origin={filmState.origin} onClose={() => setFilmState((prev) => ({ ...prev, open: false }))} />
-    </section>);
+    </section>
+      {isProductOpen && <ProductStorySections key={currentSlide.id} product={collection.find((piece) => piece.id === currentSlide.id)} />}
+    </>);
 }

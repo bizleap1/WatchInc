@@ -56,7 +56,7 @@ export default function ProductDetailDrawer({ slide, drawerRef, isOpen, }) {
       body: "Each numbered timepiece ships directly after its recorded ritual is completed.",
     },
   ];
-  return (<aside ref={drawerRef} aria-label={`${slide.titleLine1} product details`} aria-hidden={!isOpen} className={`fixed md:absolute z-30 bg-white text-[#111111] font-hero-inter overflow-y-auto overscroll-contain
+  return (<aside ref={drawerRef} aria-label={`${slide.titleLine1} product details`} aria-hidden={!isOpen} className={`absolute z-30 bg-white text-[#111111] font-hero-inter overflow-y-auto overscroll-contain
         bottom-0 left-0 right-0 h-[54%] md:top-0 md:bottom-0 md:left-auto md:right-0 md:h-full md:w-[35vw]
         translate-y-full md:translate-y-0 md:translate-x-full shadow-2xl ${isOpen ? "pointer-events-auto" : "pointer-events-none"}`}>
     <div className="h-full flex flex-col justify-between px-6 py-7 md:px-9 lg:px-11 md:py-10">
