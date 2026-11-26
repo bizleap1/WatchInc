@@ -441,30 +441,17 @@ export default function ArchitecturalHero() {
           transition={{ duration: introDone ? 1.4 : 2.8, ease: EASE }}
         >
           {/* Czard-style 360° room turn: current scene on the front of a sphere, next behind */}
-          {/* Instant plain image fallback matching active watch — crossfades smoothly */}
-          <div className="absolute inset-0">
-            <AnimatePresence initial={false}>
-              <motion.div
-                key={`bg-${watch.id}`}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.8, ease: EASE }}
-                className="absolute inset-0"
-              >
-                <Image
-                  src={watch.bgSrc}
-                  alt=""
-                  aria-hidden="true"
-                  fill
-                  priority={index === 0}
-                  quality={85}
-                  sizes="100vw"
-                  className="object-cover"
-                />
-              </motion.div>
-            </AnimatePresence>
-          </div>
+          {/* Instant plain image (preloaded by Next) — visible during the intro and until the 3D view is ready */}
+          <Image
+            src={HERO_WATCHES[0].bgSrc}
+            alt=""
+            aria-hidden="true"
+            fill
+            priority
+            quality={85}
+            sizes="100vw"
+            className="object-cover"
+          />
           <SkyBackground
             scenes={HERO_WATCHES.map((w) => w.bgSrc)}
             index={index}
